@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Time to Reset</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FDF8F3;
+    --blush: #F2D9D0;
+    --rose: #E8B4A0;
+    --dusty-mauve: #C9A0A0;
+    --sage: #B8C4B1;
+    --sage-light: #D6E0D3;
+    --lavender: #C8C0D8;
+    --lav-light: #E4E0EF;
+    --text-dark: #3D2E2E;
+    --text-mid: #7A5C5C;
+    --text-soft: #A88A8A;
+    --white: #FFFFFF;
+    --card-bg: rgba(255,255,255,0.72);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text-dark);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background blobs */
+  .bg-layer {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    overflow: hidden;
+  }
+  .blob {
+    position: absolute; border-radius: 50%;
+    filter: blur(80px); opacity: 0.45;
+    animation: drift 18s ease-in-out infinite alternate;
+  }
+  .blob-1 { width: 500px; height: 500px; background: var(--blush); top: -100px; left: -100px; animation-delay: 0s; }
+  .blob-2 { width: 400px; height: 400px; background: var(--lav-light); top: 40%; right: -80px; animation-delay: -6s; }
+  .blob-3 { width: 350px; height: 350px; background: var(--sage-light); bottom: -80px; left: 30%; animation-delay: -12s; }
+
+  @keyframes drift {
+    from { transform: translate(0,0) scale(1); }
+    to   { transform: translate(30px,20px) scale(1.06); }
+  }
+
+  /* Layout */
+  .app {
+    position: relative; z-index: 1;
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 0 16px 60px;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  /* Header — always centered, full width */
+  header {
+    width: 100%;
+    padding: 28px 0 20px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px; font-weight: 300; letter-spacing: 0.06em;
+    color: var(--text-dark);
+  }
+  .logo span { color: var(--dusty-mauve); font-style: italic; }
+  .tagline {
+    font-size: 11px; font-weight: 300; letter-spacing: 0.12em;
+    color: var(--text-soft); text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  /* Progress dots */
+  .progress-bar {
+    display: flex; gap: 8px; justify-content: center;
+    margin-top: 14px;
+    min-height: 16px;
+  }
+  .p-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--blush); transition: all 0.4s;
+  }
+  .p-dot.active { background: var(--dusty-mauve); transform: scale(1.3); }
+  .p-dot.done { background: var(--sage); }
+  /* Show soft placeholder dots on welcome screen */
+  .progress-bar.home-dots .p-dot {
+    background: var(--blush); opacity: 0.6;
+  }
+
+  /* Card */
+  .card {
+    width: 100%;
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.8);
+    border-radius: 24px;
+    padding: 32px 28px;
+    box-shadow: 0 8px 40px rgba(180,140,140,0.12);
+    animation: fadeUp 0.5s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-eyebrow {
+    font-size: 10px; font-weight: 500; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--dusty-mauve);
+    margin-bottom: 12px;
+  }
+  .card-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 30px; line-height: 1.25; font-weight: 400;
+    color: var(--text-dark); margin-bottom: 10px;
+  }
+  .card-heading em { font-style: italic; color: var(--dusty-mauve); }
+  .card-subtext {
+    font-size: 14px; line-height: 1.65; color: var(--text-mid);
+    margin-bottom: 28px; font-weight: 300;
+  }
+
+  /* Choice buttons */
+  .choices { display: flex; flex-direction: column; gap: 10px; }
+  .choice-btn {
+    display: flex; align-items: center; gap: 14px;
+    background: rgba(255,255,255,0.6);
+    border: 1.5px solid rgba(200,180,180,0.3);
+    border-radius: 14px;
+    padding: 14px 18px;
+    cursor: pointer; text-align: left;
+    transition: all 0.25s; font-family: inherit;
+    color: var(--text-dark);
+    animation: fadeUp 0.4s ease both;
+  }
+  .choice-btn:nth-child(1) { animation-delay: 0.05s; }
+  .choice-btn:nth-child(2) { animation-delay: 0.10s; }
+  .choice-btn:nth-child(3) { animation-delay: 0.15s; }
+  .choice-btn:nth-child(4) { animation-delay: 0.20s; }
+  .choice-btn:hover {
+    background: rgba(255,255,255,0.9);
+    border-color: var(--rose);
+    transform: translateX(4px);
+    box-shadow: 0 4px 18px rgba(180,130,120,0.12);
+  }
+  .choice-icon { font-size: 20px; flex-shrink: 0; }
+  .choice-label { font-size: 14px; font-weight: 400; line-height: 1.4; }
+  .choice-desc { font-size: 12px; color: var(--text-soft); font-weight: 300; margin-top: 2px; }
+
+  /* Mode picker */
+  .mode-row {
+    display: flex; gap: 10px; margin-bottom: 24px;
+  }
+  .mode-btn {
+    flex: 1; padding: 12px;
+    border: 1.5px solid rgba(200,180,180,0.3);
+    border-radius: 12px; background: rgba(255,255,255,0.5);
+    cursor: pointer; font-family: inherit;
+    font-size: 13px; color: var(--text-mid);
+    transition: all 0.25s; text-align: center;
+  }
+  .mode-btn.selected {
+    background: var(--blush); border-color: var(--rose);
+    color: var(--text-dark); font-weight: 500;
+  }
+  .mode-icon { display: block; font-size: 18px; margin-bottom: 4px; }
+
+  /* Quick Reset taps */
+  .quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .quick-btn {
+    background: rgba(255,255,255,0.55);
+    border: 1.5px solid rgba(200,180,180,0.25);
+    border-radius: 14px; padding: 18px 14px;
+    cursor: pointer; font-family: inherit;
+    text-align: center; transition: all 0.25s;
+    animation: fadeUp 0.4s ease both;
+  }
+  .quick-btn:hover { background: rgba(255,255,255,0.9); border-color: var(--rose); transform: scale(1.02); }
+  .quick-btn.selected { background: var(--blush); border-color: var(--rose); }
+  .quick-btn .q-icon { font-size: 24px; display: block; margin-bottom: 6px; }
+  .quick-btn .q-label { font-size: 13px; font-weight: 500; color: var(--text-dark); }
+  .quick-btn .q-desc { font-size: 11px; color: var(--text-soft); margin-top: 3px; }
+
+  /* Textarea */
+  textarea {
+    width: 100%; border-radius: 14px;
+    border: 1.5px solid rgba(200,180,180,0.3);
+    background: rgba(255,255,255,0.55);
+    padding: 16px; font-family: 'DM Sans', sans-serif;
+    font-size: 14px; color: var(--text-dark);
+    line-height: 1.6; resize: none;
+    outline: none; transition: border-color 0.25s;
+  }
+  textarea:focus { border-color: var(--rose); background: rgba(255,255,255,0.85); }
+  textarea::placeholder { color: var(--text-soft); }
+
+  /* Primary button */
+  .btn-primary {
+    width: 100%; padding: 16px;
+    background: linear-gradient(135deg, var(--dusty-mauve), var(--rose));
+    border: none; border-radius: 14px;
+    color: white; font-family: inherit; font-size: 15px; font-weight: 500;
+    cursor: pointer; transition: all 0.25s; letter-spacing: 0.02em;
+    box-shadow: 0 4px 20px rgba(200,140,130,0.3);
+    margin-top: 20px;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(200,140,130,0.4); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  /* Secondary button */
+  .btn-secondary {
+    width: 100%; padding: 14px;
+    background: transparent;
+    border: 1.5px solid rgba(200,180,180,0.4);
+    border-radius: 14px; color: var(--text-mid);
+    font-family: inherit; font-size: 14px;
+    cursor: pointer; transition: all 0.25s; margin-top: 10px;
+  }
+  .btn-secondary:hover { border-color: var(--rose); color: var(--text-dark); }
+
+  /* AI response area */
+  .ai-bubble {
+    background: linear-gradient(135deg, rgba(242,217,208,0.4), rgba(200,192,216,0.3));
+    border: 1px solid rgba(200,180,200,0.3);
+    border-radius: 18px; padding: 22px 24px;
+    margin-top: 4px; font-size: 14px; line-height: 1.75;
+    color: var(--text-dark); font-weight: 300;
+    animation: fadeUp 0.5s ease;
+  }
+  .ai-bubble strong { font-weight: 500; color: var(--text-dark); }
+  .ai-bubble .ai-label {
+    font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--dusty-mauve); font-weight: 500; margin-bottom: 10px; display: block;
+  }
+
+  /* Loading shimmer */
+  .loading-dots { display: flex; gap: 6px; justify-content: center; padding: 16px 0; }
+  .loading-dots span {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--rose); opacity: 0.5;
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+  .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes pulse { 0%,100%{opacity:0.3;transform:scale(0.8)} 50%{opacity:1;transform:scale(1.2)} }
+
+  /* Pattern tracker bar */
+  .pattern-bar {
+    width: 100%;
+    background: rgba(255,255,255,0.55);
+    border: 1px solid rgba(200,180,180,0.25);
+    border-radius: 16px; padding: 16px 20px;
+    margin-top: 16px;
+    display: flex; align-items: center; gap: 14px;
+    animation: fadeUp 0.4s ease;
+  }
+  .pattern-icon { font-size: 22px; }
+  .pattern-text { flex: 1; }
+  .pattern-text .pt-label { font-size: 12px; color: var(--text-soft); font-weight: 300; }
+  .pattern-text .pt-value { font-size: 14px; color: var(--text-dark); font-weight: 500; margin-top: 2px; }
+  .pattern-pips { display: flex; gap: 4px; }
+  .pip { width: 10px; height: 10px; border-radius: 50%; background: var(--blush); }
+  .pip.filled { background: var(--dusty-mauve); }
+
+  /* Pattern reveal card */
+  .reveal-card {
+    background: linear-gradient(135deg, var(--blush), var(--lav-light));
+    border-radius: 20px; padding: 28px 24px;
+    border: 1px solid rgba(200,180,200,0.4);
+    animation: fadeUp 0.6s ease;
+  }
+  .reveal-card .r-label {
+    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--dusty-mauve); font-weight: 500; margin-bottom: 12px;
+  }
+  .reveal-card .r-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px; font-weight: 400; line-height: 1.3;
+    color: var(--text-dark); margin-bottom: 16px;
+  }
+  .reveal-stat {
+    display: flex; align-items: center; gap: 12px;
+    background: rgba(255,255,255,0.5); border-radius: 12px;
+    padding: 12px 16px; margin-bottom: 8px;
+  }
+  .reveal-stat .rs-icon { font-size: 18px; }
+  .reveal-stat .rs-text { font-size: 13px; color: var(--text-mid); line-height: 1.4; }
+  .reveal-stat .rs-text strong { color: var(--text-dark); }
+
+  /* Log history */
+  .log-section { width: 100%; margin-top: 20px; }
+  .log-title { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-soft); margin-bottom: 10px; }
+  .log-entry {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.45);
+    border-radius: 10px; margin-bottom: 6px;
+    font-size: 12px; color: var(--text-mid);
+    animation: fadeUp 0.3s ease;
+  }
+  .log-time { font-size: 10px; color: var(--text-soft); margin-left: auto; white-space: nowrap; }
+
+  /* Divider */
+  .divider {
+    width: 40px; height: 1px; background: var(--blush);
+    margin: 20px auto;
+  }
+
+  /* Screen manager */
+  .screen { display: none; width: 100%; animation: fadeUp 0.5s ease; }
+  .screen.active { display: block; }
+
+  /* Circled text effect */
+  .circled-text {
+    position: relative;
+    display: inline-block;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05em;
+    font-weight: 300;
+    letter-spacing: 0.06em;
+    color: var(--text-dark);
+    padding: 2px 10px 4px;
+  }
+  .circled-text::before {
+    content: '';
+    position: absolute;
+    inset: -2px -6px;
+    border: 2px solid var(--dusty-mauve);
+    border-radius: 50% / 40%;
+    transform: rotate(-1.5deg);
+    pointer-events: none;
+  }
+
+
+  @media (max-width: 380px) {
+    .card { padding: 24px 18px; }
+    .card-heading { font-size: 25px; }
+    .quick-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-layer">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+</div>
+
+<div class="app">
+  <header>
+    <div class="logo">time to <span>reset</span></div>
+    <div class="progress-bar" id="progressBar"></div>
+  </header>
+
+  <!-- SCREEN 0: Welcome -->
+  <div class="screen active" id="screen-welcome">
+    <div class="card">
+      <div class="card-eyebrow">Welcome</div>
+      <div class="card-heading">
+        <span style="text-decoration:line-through;color:var(--text-soft);font-size:0.85em;display:block;margin-bottom:6px">Losing yourself?</span>
+        <span class="circled-text">Running on <em>empty.</em></span>
+      </div>
+      <div class="card-subtext">This is your space to reset and add to your tank — in the moment, or whenever you need it. Takes 1–4 minutes. Works any time.</div>
+      <button class="btn-primary" onclick="goTo('screen-bandwidth')">I need a reset ✦</button>
+    </div>
+    <div class="pattern-bar" id="welcomePatternBar" style="display:none">
+      <div class="pattern-icon">✦</div>
+      <div class="pattern-text">
+        <div class="pt-label">Pattern Progress</div>
+        <div class="pt-value" id="welcomePatternText"></div>
+      </div>
+      <div class="pattern-pips" id="welcomePips"></div>
+    </div>
+    <div class="log-section" id="welcomeLog"></div>
+  </div>
+
+  <!-- SCREEN 1: Bandwidth check -->
+  <div class="screen" id="screen-bandwidth">
+    <div class="card">
+      <div class="card-eyebrow">Step 1 of 4</div>
+      <div class="card-heading">How much bandwidth do you have <em>right now?</em></div>
+      <div class="card-subtext">No judgment — this shapes everything that follows.</div>
+      <div class="mode-row">
+        <button class="mode-btn" id="mode-quick" onclick="selectMode('quick')">
+          <span class="mode-icon">⚡</span>
+          Quick Reset
+          <div style="font-size:11px;margin-top:4px;font-weight:300;color:var(--text-soft)">30–60 sec<br>tap choices</div>
+        </button>
+        <button class="mode-btn" id="mode-guided" onclick="selectMode('guided')">
+          <span class="mode-icon">🌿</span>
+          Guided Reset
+          <div style="font-size:11px;margin-top:4px;font-weight:300;color:var(--text-soft)">3–4 min<br>quick prompts</div>
+        </button>
+      </div>
+      <button class="btn-primary" id="modeNextBtn" onclick="goTo('screen-trigger')" disabled>Continue →</button>
+      <button class="btn-secondary" onclick="goTo('screen-welcome')">← Back</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: Trigger -->
+  <div class="screen" id="screen-trigger">
+    <div class="card">
+      <div class="card-eyebrow">Step 2 of 4</div>
+      <div class="card-heading">What just <em>happened?</em></div>
+      <div class="card-subtext">Pick the one that feels closest to where you are.</div>
+      <div class="choices" id="triggerChoices">
+        <button class="choice-btn" onclick="selectTrigger(this, 'kids-not-listening', 'morning')">
+          <span class="choice-icon">👂</span>
+          <div><div class="choice-label">My kids aren't listening</div><div class="choice-desc">Asking the same thing over and over</div></div>
+        </button>
+        <button class="choice-btn" onclick="selectTrigger(this, 'loud-chaos', 'transition')">
+          <span class="choice-icon">🌪️</span>
+          <div><div class="choice-label">Everything feels loud and chaotic</div><div class="choice-desc">Noise, demands, zero breathing room</div></div>
+        </button>
+        <button class="choice-btn" onclick="selectTrigger(this, 'carrying-alone', 'evening')">
+          <span class="choice-icon">🏋️</span>
+          <div><div class="choice-label">I'm carrying too much alone</div><div class="choice-desc">No one sees what I'm managing</div></div>
+        </button>
+        <button class="choice-btn" onclick="selectTrigger(this, 'exhausted-touched-out', 'evening')">
+          <span class="choice-icon">🫂</span>
+          <div><div class="choice-label">I'm exhausted and touched out</div><div class="choice-desc">Nothing left to give</div></div>
+        </button>
+        <button class="choice-btn" onclick="selectTrigger(this, 'snapped-and-ashamed', 'morning')">
+          <span class="choice-icon">💔</span>
+          <div><div class="choice-label">I snapped and feel awful about it</div><div class="choice-desc">Shame spiral starting</div></div>
+        </button>
+        <button class="choice-btn" id="otherTriggerBtn" onclick="toggleOtherTrigger(this)">
+          <span class="choice-icon">✏️</span>
+          <div><div class="choice-label">Something else</div><div class="choice-desc">Describe what's happening for you</div></div>
+        </button>
+        <div id="otherTriggerInput" style="display:none;margin-top:-2px">
+          <textarea id="otherTriggerText" rows="3" placeholder="Tell me what's going on right now..." oninput="checkOtherTrigger()"></textarea>
+          <button class="btn-primary" id="otherTriggerSubmit" onclick="submitOtherTrigger()" disabled style="margin-top:10px">Continue →</button>
+        </div>
+      </div>
+      <button class="btn-secondary" onclick="goTo('screen-bandwidth')">← Back</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 3a: Quick Reset -->
+  <div class="screen" id="screen-quick">
+    <div class="card">
+      <div class="card-eyebrow">Step 3 of 4 · Quick Reset</div>
+      <div class="card-heading">Pick your <em>reset action</em></div>
+      <div class="card-subtext">Choose one. Do it now, even for 30 seconds.</div>
+      <div class="quick-grid" id="quickGrid">
+        <button class="quick-btn" onclick="selectQuick(this,'breathe')">
+          <span class="q-icon">🌬️</span>
+          <div class="q-label">Breathe</div>
+          <div class="q-desc">3 slow breaths in, out</div>
+        </button>
+        <button class="quick-btn" onclick="selectQuick(this,'move')">
+          <span class="q-icon">🚶</span>
+          <div class="q-label">Move</div>
+          <div class="q-desc">Stand up, shake it out</div>
+        </button>
+        <button class="quick-btn" onclick="selectQuick(this,'drop-standard')">
+          <span class="q-icon">🪶</span>
+          <div class="q-label">Drop a standard</div>
+          <div class="q-desc">One thing doesn't need to happen today</div>
+        </button>
+        <button class="quick-btn" onclick="selectQuick(this,'tiny-task')">
+          <span class="q-icon">✓</span>
+          <div class="q-label">Tiny task</div>
+          <div class="q-desc">One small thing done</div>
+        </button>
+      </div>
+      <div id="selfValidationRow" style="display:none;margin-top:18px;">
+        <div style="font-size:13px;color:var(--text-mid);margin-bottom:10px;font-weight:300">Complete it, then give yourself credit:</div>
+        <textarea id="selfValidation" rows="2" placeholder="Something I handled today, even imperfectly, was..."></textarea>
+      </div>
+      <button class="btn-primary" id="quickNextBtn" onclick="goToAnchor()" disabled>I did it →</button>
+      <button class="btn-secondary" onclick="goTo('screen-trigger')">← Back</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 3b: Guided Reset -->
+  <div class="screen" id="screen-guided">
+    <div class="card">
+      <div class="card-eyebrow">Step 3 of 4 · Guided Reset</div>
+      <div class="card-heading">Let's go a little <em>deeper</em></div>
+      <div class="card-subtext">Answer at your own pace. There's no wrong answer.</div>
+
+      <div style="margin-bottom:20px">
+        <div style="font-size:12px;color:var(--dusty-mauve);font-weight:500;margin-bottom:8px">That moment was hard because...</div>
+        <textarea id="guidedWhy" rows="3" placeholder="I was already tired and then everything hit at once..."></textarea>
+      </div>
+
+      <div style="margin-bottom:20px">
+        <div style="font-size:12px;color:var(--dusty-mauve);font-weight:500;margin-bottom:8px">The invisible load underneath it was probably...</div>
+        <div class="choices" id="loadChoices" style="gap:7px">
+          <button class="choice-btn" style="padding:10px 14px" onclick="selectLoad(this,'tracking')">
+            <span class="choice-icon" style="font-size:16px">📋</span>
+            <div class="choice-label" style="font-size:13px">Tracking & remembering everything</div>
+          </button>
+          <button class="choice-btn" style="padding:10px 14px" onclick="selectLoad(this,'anticipating')">
+            <span class="choice-icon" style="font-size:16px">🔮</span>
+            <div class="choice-label" style="font-size:13px">Anticipating what comes next</div>
+          </button>
+          <button class="choice-btn" style="padding:10px 14px" onclick="selectLoad(this,'decision-fatigue')">
+            <span class="choice-icon" style="font-size:16px">🌀</span>
+            <div class="choice-label" style="font-size:13px">Decision fatigue — too many choices</div>
+          </button>
+          <button class="choice-btn" style="padding:10px 14px" onclick="selectLoad(this,'coordination')">
+            <span class="choice-icon" style="font-size:16px">🗓️</span>
+            <div class="choice-label" style="font-size:13px">Coordinating everyone's lives</div>
+          </button>
+          <button class="choice-btn" style="padding:10px 14px" onclick="selectLoad(this,'emotional-labor')">
+            <span class="choice-icon" style="font-size:16px">💛</span>
+            <div class="choice-label" style="font-size:13px">Being the emotional anchor for everyone</div>
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:12px;color:var(--dusty-mauve);font-weight:500;margin-bottom:8px">Something I handled better than I realize is...</div>
+        <textarea id="guidedCredit" rows="2" placeholder="I kept going even though I was exhausted..."></textarea>
+      </div>
+
+      <button class="btn-primary" id="guidedNextBtn" onclick="goToAnchor()" style="margin-top:20px" disabled>Get my reset →</button>
+      <button class="btn-secondary" onclick="goTo('screen-trigger')">← Back</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 4: AI Response -->
+  <div class="screen" id="screen-response">
+    <div class="card">
+      <div class="card-eyebrow">Your Reset</div>
+      <div class="card-heading">Here's what I want you to <em>hear</em></div>
+      <div id="aiContent">
+        <div class="loading-dots"><span></span><span></span><span></span></div>
+      </div>
+      <button class="btn-primary" id="doneBtn" onclick="finishReset()" style="display:none">I feel a little better ✦</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 5: Pattern reveal or close -->
+  <div class="screen" id="screen-pattern">
+    <div class="card" id="patternCard">
+      <!-- filled dynamically -->
+    </div>
+    <button class="btn-secondary" style="max-width:480px;width:100%;margin-top:12px" onclick="goTo('screen-welcome')">Return to home</button>
+  </div>
+
+</div>
+
+<script>
+  // ─── State ───────────────────────────────────────────────────────────────────
+  const state = {
+    mode: null,
+    trigger: null,
+    triggerTime: null,
+    load: null,
+    quickAction: null,
+    entries: []
+  };
+
+  const STORAGE_KEY = 'resetRoom_entries_v1';
+
+  // Load persisted entries
+  function loadEntries() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) state.entries = JSON.parse(raw);
+    } catch(e) { state.entries = []; }
+  }
+
+  function saveEntry(entry) {
+    state.entries.push(entry);
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state.entries)); } catch(e) {}
+  }
+
+  // ─── Screen management ───────────────────────────────────────────────────────
+  const STEPS = ['screen-welcome','screen-bandwidth','screen-trigger','screen-quick','screen-response','screen-pattern'];
+
+  function goTo(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const target = document.getElementById(id);
+    if (target) {
+      target.classList.add('active');
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    updateProgress(id);
+  }
+
+  function updateProgress(screenId) {
+    const steps = ['screen-bandwidth','screen-trigger','screen-quick','screen-guided','screen-response','screen-pattern'];
+    const idx = steps.indexOf(screenId);
+    const bar = document.getElementById('progressBar');
+    bar.innerHTML = '';
+    if (idx < 0) {
+      // Welcome screen — show 6 soft placeholder dots
+      bar.classList.add('home-dots');
+      for (let i = 0; i < 6; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'p-dot';
+        bar.appendChild(dot);
+      }
+      return;
+    }
+    bar.classList.remove('home-dots');
+    steps.forEach((s, i) => {
+      const dot = document.createElement('div');
+      dot.className = 'p-dot' + (i < idx ? ' done' : i === idx ? ' active' : '');
+      bar.appendChild(dot);
+    });
+  }
+
+  // ─── Mode selection ──────────────────────────────────────────────────────────
+  function selectMode(m) {
+    state.mode = m;
+    document.getElementById('mode-quick').classList.toggle('selected', m === 'quick');
+    document.getElementById('mode-guided').classList.toggle('selected', m === 'guided');
+    document.getElementById('modeNextBtn').disabled = false;
+  }
+
+  // ─── Trigger selection ───────────────────────────────────────────────────────
+  function selectTrigger(btn, triggerKey, timeOfDay) {
+    document.querySelectorAll('#triggerChoices .choice-btn').forEach(b => b.style.background = '');
+    btn.style.background = 'rgba(242,217,208,0.6)';
+    btn.style.borderColor = 'var(--rose)';
+    state.trigger = triggerKey;
+    state.triggerTime = getCurrentTimeOfDay();
+    // Short delay then advance
+    setTimeout(() => {
+      goTo(state.mode === 'quick' ? 'screen-quick' : 'screen-guided');
+    }, 300);
+  }
+
+  function toggleOtherTrigger(btn) {
+    const inputDiv = document.getElementById('otherTriggerInput');
+    const isOpen = inputDiv.style.display !== 'none';
+    if (isOpen) {
+      inputDiv.style.display = 'none';
+      btn.style.background = '';
+      btn.style.borderColor = '';
+    } else {
+      // Deselect other choices
+      document.querySelectorAll('#triggerChoices .choice-btn').forEach(b => {
+        b.style.background = ''; b.style.borderColor = '';
+      });
+      btn.style.background = 'rgba(242,217,208,0.6)';
+      btn.style.borderColor = 'var(--rose)';
+      inputDiv.style.display = 'block';
+      document.getElementById('otherTriggerText').focus();
+    }
+  }
+
+  function checkOtherTrigger() {
+    const val = document.getElementById('otherTriggerText').value.trim();
+    document.getElementById('otherTriggerSubmit').disabled = val.length < 5;
+  }
+
+  function submitOtherTrigger() {
+    const text = document.getElementById('otherTriggerText').value.trim();
+    state.trigger = 'other';
+    state.triggerCustomText = text;
+    state.triggerTime = getCurrentTimeOfDay();
+    setTimeout(() => {
+      goTo(state.mode === 'quick' ? 'screen-quick' : 'screen-guided');
+    }, 200);
+  }
+
+
+  function getCurrentTimeOfDay() {
+    const h = new Date().getHours();
+    if (h < 9) return 'early morning';
+    if (h < 12) return 'morning';
+    if (h < 14) return 'midday';
+    if (h < 17) return 'afternoon';
+    if (h < 20) return 'evening';
+    return 'night';
+  }
+
+  // ─── Quick Reset ─────────────────────────────────────────────────────────────
+  function selectQuick(btn, action) {
+    document.querySelectorAll('.quick-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    state.quickAction = action;
+    document.getElementById('quickNextBtn').disabled = false;
+    document.getElementById('selfValidationRow').style.display = 'block';
+  }
+
+  // ─── Load selection (guided) ─────────────────────────────────────────────────
+  function selectLoad(btn, loadKey) {
+    document.querySelectorAll('#loadChoices .choice-btn').forEach(b => {
+      b.style.background = ''; b.style.borderColor = '';
+    });
+    btn.style.background = 'rgba(242,217,208,0.5)';
+    btn.style.borderColor = 'var(--rose)';
+    state.load = loadKey;
+    checkGuidedReady();
+  }
+
+  function checkGuidedReady() {
+    const why = document.getElementById('guidedWhy').value.trim();
+    document.getElementById('guidedNextBtn').disabled = !(state.load && why.length > 5);
+  }
+
+  document.addEventListener('input', e => {
+    if (e.target.id === 'guidedWhy') checkGuidedReady();
+  });
+
+  // ─── Navigate to AI screen ───────────────────────────────────────────────────
+  function goToAnchor() {
+    goTo('screen-response');
+    generateReset();
+  }
+
+  // ─── AI Call ─────────────────────────────────────────────────────────────────
+  async function generateReset() {
+    document.getElementById('aiContent').innerHTML = '<div class="loading-dots"><span></span><span></span><span></span></div>';
+    document.getElementById('doneBtn').style.display = 'none';
+
+    const triggerLabel = state.trigger === 'other'
+      ? (state.triggerCustomText || 'something overwhelming that she described in her own words')
+      : ({
+      'kids-not-listening': "her kids won't listen and she's asked multiple times",
+      'loud-chaos': "everything feels loud and chaotic with no breathing room",
+      'carrying-alone': "she's carrying too much invisible load completely alone",
+      'exhausted-touched-out': "she's exhausted and touched out with nothing left to give",
+      'snapped-and-ashamed': "she snapped at her kids and now feels shame and guilt"
+    }[state.trigger] || state.trigger);
+
+    const loadLabel = {
+      'tracking': 'tracking and remembering everything',
+      'anticipating': 'anticipating what comes next for everyone',
+      'decision-fatigue': 'decision fatigue from too many choices',
+      'coordination': 'coordinating everyone\'s schedules and lives',
+      'emotional-labor': 'being the emotional anchor for the entire family'
+    }[state.load] || state.load;
+
+    const modeContext = state.mode === 'quick'
+      ? `She chose a quick reset (${state.quickAction?.replace('-',' ')}).`
+      : `She reflected that: "${document.getElementById('guidedWhy')?.value || ''}". The invisible load was: ${loadLabel}.`;
+
+    const prompt = `You are a warm, wise companion for exhausted working moms. A mom is using The Reset Room — a tool to help her recover from overwhelmed moments.
+
+Her situation: ${triggerLabel}
+Time of day: ${state.triggerTime}
+${modeContext}
+${document.getElementById('guidedCredit')?.value ? `She gave herself credit for: "${document.getElementById('guidedCredit').value}"` : ''}
+${document.getElementById('selfValidation')?.value ? `Her self-acknowledgment: "${document.getElementById('selfValidation').value}"` : ''}
+
+Write a reset response with EXACTLY this structure — no headers, no markdown, just flowing warm text broken into 4 short paragraphs:
+
+1. VALIDATION (2-3 sentences): Name exactly what happened and why it makes total sense that she feels this way. Use the specific trigger. Be specific, not generic. Start with empathy not advice.
+
+2. REFRAME (2 sentences): Gently shift the lens. Not toxic positivity — just a true, grounding reframe. E.g. "This isn't about who you are. It's about what you're carrying."
+
+3. RIGHT NOW (2-3 sentences): One very small, concrete action for the next 5 minutes to restore a tiny bit of calm or agency. Make it physical or behavioral — not abstract.
+
+4. TOMORROW ANCHOR (2 sentences): One tiny structural shift that could reduce this specific trigger tomorrow. Practical, not preachy. End with warmth.
+
+Tone: like a wise, warm friend — not a therapist, not a life coach. Conversational, grounded, human. Use "you" throughout. Keep the whole thing under 200 words.`;
+
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+      const data = await res.json();
+      const text = data.content?.map(c => c.text || '').join('') || '';
+      renderResponse(text);
+    } catch(e) {
+      renderResponse("Something gentle: you showed up for yourself today by pausing. That matters more than you know.\n\nWhatever just happened, it makes sense that it was hard. You're carrying a lot.\n\nRight now, take three slow breaths. Put your hand on your chest. You're okay.\n\nTomorrow, before the chaos starts, give yourself one minute of silence — just one. You deserve that much.");
+    }
+  }
+
+  function renderResponse(text) {
+    const paragraphs = text.split(/\n\n+/).filter(p => p.trim());
+    let html = '<div class="ai-bubble"><span class="ai-label">✦ For you</span>';
+    paragraphs.forEach((p, i) => {
+      html += `<p style="margin-bottom:${i < paragraphs.length-1 ? '14px' : '0'}">${p.trim()}</p>`;
+    });
+    html += '</div>';
+    document.getElementById('aiContent').innerHTML = html;
+    document.getElementById('doneBtn').style.display = 'block';
+  }
+
+  // ─── Finish reset ─────────────────────────────────────────────────────────────
+  function finishReset() {
+    const entry = {
+      id: Date.now(),
+      trigger: state.trigger,
+      triggerCustomText: state.triggerCustomText || null,
+      triggerTime: state.triggerTime,
+      load: state.load,
+      mode: state.mode,
+      date: new Date().toLocaleDateString('en-US', { month:'short', day:'numeric' }),
+      hour: new Date().getHours()
+    };
+    saveEntry(entry);
+    showPatternScreen();
+  }
+
+  // ─── Pattern screen ───────────────────────────────────────────────────────────
+  function showPatternScreen() {
+    const count = state.entries.length;
+    const card = document.getElementById('patternCard');
+
+    if (count < 5) {
+      const remaining = 5 - count;
+      const pips = Array(5).fill(0).map((_, i) =>
+        `<div class="pip ${i < count ? 'filled' : ''}"></div>`
+      ).join('');
+
+      card.innerHTML = `
+        <div class="card-eyebrow">Pattern Progress</div>
+        <div class="card-heading">Good. You <em>showed up.</em></div>
+        <div class="card-subtext">Each reset you complete helps surface your patterns. After 5 resets, I'll show you when your hardest moments tend to happen — and why.</div>
+        <div style="display:flex;align-items:center;gap:14px;background:rgba(255,255,255,0.5);border-radius:14px;padding:16px 18px;margin-top:4px">
+          <div style="font-size:22px">✦</div>
+          <div style="flex:1">
+            <div style="font-size:12px;color:var(--text-soft);margin-bottom:6px">${count} of 5 moments logged</div>
+            <div style="display:flex;gap:5px">${pips}</div>
+          </div>
+          <div style="font-size:13px;color:var(--dusty-mauve);font-weight:500">${remaining} more</div>
+        </div>
+        <div style="margin-top:20px;padding:16px;background:rgba(242,217,208,0.3);border-radius:12px;font-size:13px;color:var(--text-mid);line-height:1.6;font-weight:300">
+          💛 Take a breath. You just did something kind for yourself.
+        </div>
+      `;
+    } else {
+      // Generate pattern from entries
+      const timeGroups = {};
+      state.entries.forEach(e => {
+        timeGroups[e.triggerTime] = (timeGroups[e.triggerTime] || 0) + 1;
+      });
+      const topTime = Object.entries(timeGroups).sort((a,b) => b[1]-a[1])[0]?.[0] || 'evening';
+
+      const loadGroups = {};
+      state.entries.forEach(e => {
+        if (e.load) loadGroups[e.load] = (loadGroups[e.load] || 0) + 1;
+      });
+      const topLoad = Object.entries(loadGroups).sort((a,b) => b[1]-a[1])[0]?.[0] || 'tracking';
+
+      const loadLabels = {
+        'tracking': 'tracking & remembering',
+        'anticipating': 'anticipating everything',
+        'decision-fatigue': 'decision fatigue',
+        'coordination': 'coordination load',
+        'emotional-labor': 'emotional labor'
+      };
+
+      const triggerGroups = {};
+      state.entries.forEach(e => {
+        triggerGroups[e.trigger] = (triggerGroups[e.trigger] || 0) + 1;
+      });
+      const topTrigger = Object.entries(triggerGroups).sort((a,b) => b[1]-a[1])[0]?.[0] || '';
+      const triggerLabels = {
+        'kids-not-listening': "kids not listening",
+        'loud-chaos': "overwhelm and chaos",
+        'carrying-alone': "carrying too much alone",
+        'exhausted-touched-out': "exhaustion and being touched out",
+        'snapped-and-ashamed': "shame after snapping"
+      };
+
+      card.innerHTML = `
+        <div class="reveal-card">
+          <div class="r-label">✦ Your Invisible Load Pattern</div>
+          <div class="r-heading">Your hardest moments tend to happen in the <em>${topTime}</em>.</div>
+          <div class="reveal-stat">
+            <div class="rs-icon">🕐</div>
+            <div class="rs-text"><strong>Peak struggle time:</strong> ${topTime} — this is when your reserves are lowest</div>
+          </div>
+          <div class="reveal-stat">
+            <div class="rs-icon">⚖️</div>
+            <div class="rs-text"><strong>Biggest hidden load:</strong> ${loadLabels[topLoad] || topLoad} — this is what's actually draining you</div>
+          </div>
+          ${topTrigger ? `<div class="reveal-stat">
+            <div class="rs-icon">🔁</div>
+            <div class="rs-text"><strong>Most common trigger:</strong> ${triggerLabels[topTrigger] || topTrigger}</div>
+          </div>` : ''}
+          <div style="margin-top:20px;padding:16px;background:rgba(255,255,255,0.5);border-radius:12px">
+            <div style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--dusty-mauve);margin-bottom:8px;font-weight:500">One Relief Shift</div>
+            <div style="font-size:13px;color:var(--text-mid);line-height:1.65;font-weight:300">${getReliefShift(topTime, topLoad)}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    goTo('screen-pattern');
+    updateWelcomePatternBar();
+  }
+
+  function getReliefShift(time, load) {
+    const shifts = {
+      'morning': {
+        'tracking': "Before tomorrow's morning rush, take 60 seconds the night before to write down the 3 things you absolutely need to remember. One list, off your brain.",
+        'anticipating': "Give yourself permission to not plan everything. Tomorrow morning, handle only what's in front of you — not what might happen at 3pm.",
+        'decision-fatigue': "Pick tomorrow's meals and your outfit tonight. Two fewer decisions before 9am changes everything.",
+        'coordination': "Designate one family logistics moment each evening (5 min max) so morning isn't when everyone figures things out.",
+        'emotional-labor': "Tomorrow morning, before anyone needs you — give yourself 5 minutes first. Even in the bathroom with the door locked."
+      },
+      'evening': {
+        'tracking': "Write a 'brain dump' each evening — everything you're tracking onto paper or a note. It doesn't need to be organized. Just out of your head.",
+        'anticipating': "The evening shift is hard because you're anticipating tomorrow while recovering from today. Give yourself a 'close of day' ritual — even 2 minutes — to mentally close the file.",
+        'decision-fatigue': "By evening your decision-making tank is empty. Batch the recurring decisions (dinner rotation, bedtime order) so they're not made from scratch each day.",
+        'coordination': "See if one coordination task can be handed off — even partially. The school pickup, the activity reminder, the permission form follow-up.",
+        'emotional-labor': "You've been the anchor all day. Evenings, even briefly, you get to be a person not just a parent. Name one thing that's yours — not family-serving — and protect it."
+      }
+    };
+    const timeKey = ['morning','early morning'].includes(time) ? 'morning' : 'evening';
+    return shifts[timeKey]?.[load] || "Identify one recurring thing that drains you most at this time of day, and ask: can this be dropped, simplified, or shared? Even one shift creates breathing room.";
+  }
+
+  // ─── Welcome pattern bar ──────────────────────────────────────────────────────
+  function updateWelcomePatternBar() {
+    const count = state.entries.length;
+    if (count === 0) return;
+
+    const bar = document.getElementById('welcomePatternBar');
+    bar.style.display = 'flex';
+
+    document.getElementById('welcomePatternText').textContent =
+      count >= 5 ? 'Pattern unlocked! See your insights.' : `${count} of 5 moments logged`;
+
+    const pips = document.getElementById('welcomePips');
+    pips.innerHTML = Array(5).fill(0).map((_, i) =>
+      `<div class="pip ${i < count ? 'filled' : ''}"></div>`
+    ).join('');
+
+    // Show recent log
+    const logSection = document.getElementById('welcomeLog');
+    if (state.entries.length > 0) {
+      const recent = [...state.entries].reverse().slice(0, 3);
+      const triggerLabels = {
+        'kids-not-listening': "Kids not listening",
+        'loud-chaos': "Loud & chaotic",
+        'carrying-alone': "Carrying too much",
+        'exhausted-touched-out': "Exhausted & touched out",
+        'snapped-and-ashamed': "Snapped & ashamed",
+        'other': "Something else"
+      };
+      logSection.innerHTML = `<div class="log-title">Recent resets</div>` +
+        recent.map(e => `
+          <div class="log-entry">
+            <span>💛</span>
+            <span>${triggerLabels[e.trigger] || e.trigger}</span>
+            <span class="log-time">${e.date} · ${e.triggerTime}</span>
+          </div>
+        `).join('');
+    }
+  }
+
+  // ─── Init ─────────────────────────────────────────────────────────────────────
+  loadEntries();
+  updateWelcomePatternBar();
+  updateProgress('screen-welcome');
+</script>
+</body>
+</html>
