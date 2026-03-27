@@ -343,6 +343,62 @@
   }
 
 
+  /* History screen */
+  .history-entry {
+    border-radius: 12px;
+    background: rgba(255,255,255,0.5);
+    margin-bottom: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .history-entry:hover { background: rgba(255,255,255,0.75); }
+  .history-entry-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 14px;
+    font-size: 13px;
+  }
+  .history-trigger {
+    flex: 1;
+    color: var(--text-mid);
+    font-weight: 400;
+  }
+  .history-meta {
+    font-size: 11px;
+    color: var(--text-soft);
+    white-space: nowrap;
+  }
+  .history-detail {
+    display: none;
+    padding: 0 14px 14px;
+    font-size: 12.5px;
+    color: var(--text-mid);
+    line-height: 1.65;
+    font-weight: 300;
+    border-top: 1px solid rgba(0,0,0,0.06);
+    margin-top: 0;
+  }
+  .history-detail.open { display: block; }
+  .history-detail p { margin: 10px 0 0; }
+  .history-detail p:first-child { margin-top: 12px; }
+  .log-view-all {
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+    padding: 10px;
+    font-size: 13px;
+    color: var(--dusty-mauve);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+  }
+  .log-view-all:hover { text-decoration: underline; }
+
   @media (max-width: 380px) {
     .card { padding: 24px 18px; }
     .card-heading { font-size: 25px; }
@@ -364,8 +420,24 @@
     <div class="progress-bar" id="progressBar"></div>
   </header>
 
+  <!-- SCREEN -1: Email Gate -->
+  <div class="screen active" id="screen-gate">
+    <div class="card">
+      <div class="card-eyebrow">Free tool for working moms</div>
+      <div class="card-heading">Before we start — <em>who are you?</em></div>
+      <div class="card-subtext">Enter your name and email and I'll send you your reset results so you never lose them. No spam, ever. Unsubscribe any time.</div>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-top:4px">
+        <input type="text" id="gateName" placeholder="First name" style="width:100%;padding:14px 16px;border:1.5px solid rgba(0,0,0,0.1);border-radius:12px;font-size:14px;font-family:inherit;background:rgba(255,255,255,0.7);color:var(--text-dark);outline:none;box-sizing:border-box"/>
+        <input type="email" id="gateEmail" placeholder="Email address" style="width:100%;padding:14px 16px;border:1.5px solid rgba(0,0,0,0.1);border-radius:12px;font-size:14px;font-family:inherit;background:rgba(255,255,255,0.7);color:var(--text-dark);outline:none;box-sizing:border-box"/>
+      </div>
+      <div id="gateError" style="display:none;font-size:12px;color:#c0392b;margin-top:6px;font-weight:300"></div>
+      <button class="btn-primary" id="gateBtn" onclick="submitGate()" style="margin-top:20px">Take me in ✦</button>
+      <div style="font-size:11px;color:var(--text-soft);text-align:center;margin-top:12px;font-weight:300;line-height:1.6">By entering your email you're joining Darz's free list.<br>Unsubscribe any time.</div>
+    </div>
+  </div>
+
   <!-- SCREEN 0: Welcome -->
-  <div class="screen active" id="screen-welcome">
+  <div class="screen" id="screen-welcome">
     <div class="card">
       <div class="card-eyebrow">Welcome</div>
       <div class="card-heading">
@@ -449,88 +521,202 @@
     </div>
   </div>
 
-  <!-- SCREEN 3a: Quick Reset -->
-  <div class="screen" id="screen-quick">
+  <!-- QUICK RESET: Screen Q1 — First move -->
+  <div class="screen" id="screen-quick-q1">
     <div class="card">
-      <div class="card-eyebrow">Step 3 of 4 · Quick Reset</div>
-      <div class="card-heading">Pick your <em>reset action</em></div>
-      <div class="card-subtext">Choose one. Do it now, even for 30 seconds.</div>
-      <div class="quick-grid" id="quickGrid">
-        <button class="quick-btn" onclick="selectQuick(this,'breathe')">
+      <div class="card-eyebrow">Quick Reset · 1 of 3</div>
+      <div class="card-heading">First, just <em>get up.</em></div>
+      <div class="card-subtext">When you're frozen, your brain needs proof you can move. One of these — right now, even for 30 seconds. That's it.</div>
+      <div class="quick-grid">
+        <button class="quick-btn" onclick="selectQuickQ1(this,'breathe')">
           <span class="q-icon">🌬️</span>
           <div class="q-label">Breathe</div>
-          <div class="q-desc">3 slow breaths in, out</div>
+          <div class="q-desc">3 slow breaths, in and out</div>
         </button>
-        <button class="quick-btn" onclick="selectQuick(this,'move')">
+        <button class="quick-btn" onclick="selectQuickQ1(this,'move')">
           <span class="q-icon">🚶</span>
-          <div class="q-label">Move</div>
-          <div class="q-desc">Stand up, shake it out</div>
+          <div class="q-label">Get up & move</div>
+          <div class="q-desc">Stand, walk, shake it out</div>
         </button>
-        <button class="quick-btn" onclick="selectQuick(this,'drop-standard')">
-          <span class="q-icon">🪶</span>
-          <div class="q-label">Drop a standard</div>
-          <div class="q-desc">One thing doesn't need to happen today</div>
+        <button class="quick-btn" onclick="selectQuickQ1(this,'bathroom')">
+          <span class="q-icon">🚪</span>
+          <div class="q-label">Step away</div>
+          <div class="q-desc">Bathroom, outside, anywhere else</div>
         </button>
-        <button class="quick-btn" onclick="selectQuick(this,'tiny-task')">
-          <span class="q-icon">✓</span>
-          <div class="q-label">Tiny task</div>
-          <div class="q-desc">One small thing done</div>
+        <button class="quick-btn" onclick="selectQuickQ1(this,'phone-down')">
+          <span class="q-icon">📵</span>
+          <div class="q-label">Put the phone down</div>
+          <div class="q-desc">Scrolling is not rest</div>
         </button>
       </div>
-      <div id="selfValidationRow" style="display:none;margin-top:18px;">
-        <div style="font-size:13px;color:var(--text-mid);margin-bottom:10px;font-weight:300">Complete it, then give yourself credit:</div>
-        <textarea id="selfValidation" rows="2" placeholder="Something I handled today, even imperfectly, was..."></textarea>
-      </div>
-      <button class="btn-primary" id="quickNextBtn" onclick="goToAnchor()" disabled>I did it →</button>
+      <button class="btn-primary" id="quickQ1Btn" onclick="goTo('screen-quick-q2')" disabled>I did it →</button>
       <button class="btn-secondary" onclick="goTo('screen-trigger')">← Back</button>
     </div>
   </div>
 
-  <!-- SCREEN 3b: Guided Reset -->
-  <div class="screen" id="screen-guided">
+  <!-- QUICK RESET: Screen Q2 — Drop something -->
+  <div class="screen" id="screen-quick-q2">
     <div class="card">
-      <div class="card-eyebrow">Step 3 of 4 · Guided Reset</div>
-      <div class="card-heading">Let's go a little <em>deeper</em></div>
-      <div class="card-subtext">Answer at your own pace. There's no wrong answer.</div>
-
-      <div style="margin-bottom:20px">
-        <div style="font-size:12px;color:var(--dusty-mauve);font-weight:500;margin-bottom:8px">That moment was hard because...</div>
-        <textarea id="guidedWhy" rows="3" placeholder="I was already tired and then everything hit at once..."></textarea>
+      <div class="card-eyebrow">Quick Reset · 2 of 3</div>
+      <div class="card-heading">What can you <em>let go of</em> today?</div>
+      <div class="card-subtext">Not forever. Just today. You're allowed to decide that some things don't need to happen right now.</div>
+      <div class="choices" id="quickQ2Choices">
+        <button class="choice-btn" onclick="selectQuickQ2(this,'perfect-dinner')">
+          <span class="choice-icon">🍳</span>
+          <div><div class="choice-label">A real dinner</div><div class="choice-desc">Cereal counts. Sandwiches count. You count.</div></div>
+        </button>
+        <button class="choice-btn" onclick="selectQuickQ2(this,'clean-house')">
+          <span class="choice-icon">🧹</span>
+          <div><div class="choice-label">A clean house</div><div class="choice-desc">The mess will still be there tomorrow. So will you.</div></div>
+        </button>
+        <button class="choice-btn" onclick="selectQuickQ2(this,'being-patient')">
+          <span class="choice-icon">😤</span>
+          <div><div class="choice-label">Being patient about everything</div><div class="choice-desc">You're human. You get to have a hard moment.</div></div>
+        </button>
+        <button class="choice-btn" onclick="selectQuickQ2(this,'productivity')">
+          <span class="choice-icon">📋</span>
+          <div><div class="choice-label">Being productive tonight</div><div class="choice-desc">Rest is not wasted time.</div></div>
+        </button>
+        <button class="choice-btn" onclick="selectQuickQ2(this,'keeping-up')">
+          <span class="choice-icon">🏃</span>
+          <div><div class="choice-label">Keeping up with everything</div><div class="choice-desc">You were never supposed to do all of this alone.</div></div>
+        </button>
       </div>
+      <button class="btn-primary" id="quickQ2Btn" onclick="goTo('screen-quick-q3')" disabled>Okay, dropped →</button>
+      <button class="btn-secondary" onclick="goTo('screen-quick-q1')">← Back</button>
+    </div>
+  </div>
 
-      <div style="margin-bottom:20px">
-        <div style="font-size:12px;color:var(--dusty-mauve);font-weight:500;margin-bottom:8px">The invisible load underneath it was probably...</div>
-        <div class="choices" id="loadChoices" style="gap:7px">
-          <button class="choice-btn" style="padding:10px 14px" onclick="selectLoad(this,'tracking')">
-            <span class="choice-icon" style="font-size:16px">📋</span>
-            <div class="choice-label" style="font-size:13px">Tracking & remembering everything</div>
-          </button>
-          <button class="choice-btn" style="padding:10px 14px" onclick="selectLoad(this,'anticipating')">
-            <span class="choice-icon" style="font-size:16px">🔮</span>
-            <div class="choice-label" style="font-size:13px">Anticipating what comes next</div>
-          </button>
-          <button class="choice-btn" style="padding:10px 14px" onclick="selectLoad(this,'decision-fatigue')">
-            <span class="choice-icon" style="font-size:16px">🌀</span>
-            <div class="choice-label" style="font-size:13px">Decision fatigue — too many choices</div>
-          </button>
-          <button class="choice-btn" style="padding:10px 14px" onclick="selectLoad(this,'coordination')">
-            <span class="choice-icon" style="font-size:16px">🗓️</span>
-            <div class="choice-label" style="font-size:13px">Coordinating everyone's lives</div>
-          </button>
-          <button class="choice-btn" style="padding:10px 14px" onclick="selectLoad(this,'emotional-labor')">
-            <span class="choice-icon" style="font-size:16px">💛</span>
-            <div class="choice-label" style="font-size:13px">Being the emotional anchor for everyone</div>
-          </button>
-        </div>
+  <!-- QUICK RESET: Screen Q3 — tiny win + credit -->
+  <div class="screen" id="screen-quick-q3">
+    <div class="card">
+      <div class="card-eyebrow">Quick Reset · 3 of 3</div>
+      <div class="card-heading">One tiny thing, <em>then done.</em></div>
+      <div class="card-subtext">Pick something you can do in under 2 minutes. The goal isn't progress — it's proof that you can move. Your brain needs that right now.</div>
+      <div class="quick-grid" style="margin-bottom:18px">
+        <button class="quick-btn" onclick="selectQuickQ3(this,'one-dish')">
+          <span class="q-icon">🍽️</span>
+          <div class="q-label">Wash one dish</div>
+          <div class="q-desc">Just one</div>
+        </button>
+        <button class="quick-btn" onclick="selectQuickQ3(this,'one-thing-away')">
+          <span class="q-icon">✦</span>
+          <div class="q-label">Put one thing away</div>
+          <div class="q-desc">Whatever's in front of you</div>
+        </button>
+        <button class="quick-btn" onclick="selectQuickQ3(this,'laundry')">
+          <span class="q-icon">🧺</span>
+          <div class="q-label">Switch the laundry</div>
+          <div class="q-desc">2 minutes, done</div>
+        </button>
+        <button class="quick-btn" onclick="selectQuickQ3(this,'water')">
+          <span class="q-icon">💧</span>
+          <div class="q-label">Drink some water</div>
+          <div class="q-desc">Seriously, when did you last?</div>
+        </button>
       </div>
-
-      <div>
-        <div style="font-size:12px;color:var(--dusty-mauve);font-weight:500;margin-bottom:8px">Something I handled better than I realize is...</div>
-        <textarea id="guidedCredit" rows="2" placeholder="I kept going even though I was exhausted..."></textarea>
+      <div id="quickCreditRow" style="display:none">
+        <div style="font-size:13px;color:var(--dusty-mauve);font-weight:500;margin-bottom:8px">Now — give yourself actual credit.</div>
+        <div style="font-size:12px;color:var(--text-soft);margin-bottom:10px;font-weight:300">Not toxic positivity. Just honesty. Something you handled today, even if it was messy:</div>
+        <textarea id="selfValidation" rows="2" placeholder="I kept going even when I wanted to quit..."></textarea>
       </div>
+      <button class="btn-primary" id="quickQ3Btn" onclick="goToAnchor()" disabled>Get my reset →</button>
+      <button class="btn-secondary" onclick="goTo('screen-quick-q2')">← Back</button>
+    </div>
+  </div>
 
-      <button class="btn-primary" id="guidedNextBtn" onclick="goToAnchor()" style="margin-top:20px" disabled>Get my reset →</button>
+  <!-- GUIDED RESET: Screen G1 — What happened -->
+  <div class="screen" id="screen-guided-g1">
+    <div class="card">
+      <div class="card-eyebrow">Guided Reset · 1 of 4</div>
+      <div class="card-heading">What just <em>happened?</em></div>
+      <div class="card-subtext">I'm super curious — not to fix it, just to understand it. Say as much or as little as you want.</div>
+      <textarea id="guidedWhy" rows="4" placeholder="I was already tired and then everything just hit at once..."></textarea>
+      <button class="btn-primary" id="guidedG1Btn" onclick="goTo('screen-guided-g2')" disabled style="margin-top:20px">Keep going →</button>
       <button class="btn-secondary" onclick="goTo('screen-trigger')">← Back</button>
+    </div>
+  </div>
+
+  <!-- GUIDED RESET: Screen G2 — The invisible load -->
+  <div class="screen" id="screen-guided-g2">
+    <div class="card">
+      <div class="card-eyebrow">Guided Reset · 2 of 4</div>
+      <div class="card-heading">What's <em>actually</em> underneath it?</div>
+      <div class="card-subtext">The thing that set you off is usually not the real thing. What's the weight you've been carrying quietly?</div>
+      <div class="choices" id="loadChoices" style="gap:8px">
+        <button class="choice-btn" style="padding:11px 14px" onclick="selectLoad(this,'tracking')">
+          <span class="choice-icon" style="font-size:16px">📋</span>
+          <div><div class="choice-label" style="font-size:13px">I'm tracking everything in my head</div><div class="choice-desc">Appointments, forms, sizes, schedules — all of it</div></div>
+        </button>
+        <button class="choice-btn" style="padding:11px 14px" onclick="selectLoad(this,'anticipating')">
+          <span class="choice-icon" style="font-size:16px">🔮</span>
+          <div><div class="choice-label" style="font-size:13px">I'm always thinking ahead for everyone</div><div class="choice-desc">Anticipating needs before anyone else notices</div></div>
+        </button>
+        <button class="choice-btn" style="padding:11px 14px" onclick="selectLoad(this,'decision-fatigue')">
+          <span class="choice-icon" style="font-size:16px">🌀</span>
+          <div><div class="choice-label" style="font-size:13px">I've made a thousand decisions today</div><div class="choice-desc">My brain is completely out of gas</div></div>
+        </button>
+        <button class="choice-btn" style="padding:11px 14px" onclick="selectLoad(this,'coordination')">
+          <span class="choice-icon" style="font-size:16px">🗓️</span>
+          <div><div class="choice-label" style="font-size:13px">I'm coordinating everyone's entire life</div><div class="choice-desc">And no one sees the half of it</div></div>
+        </button>
+        <button class="choice-btn" style="padding:11px 14px" onclick="selectLoad(this,'emotional-labor')">
+          <span class="choice-icon" style="font-size:16px">💛</span>
+          <div><div class="choice-label" style="font-size:13px">I'm the emotional anchor for everyone</div><div class="choice-desc">Everyone brings their feelings to me</div></div>
+        </button>
+      </div>
+      <button class="btn-primary" id="guidedG2Btn" onclick="goTo('screen-guided-g3')" disabled style="margin-top:20px">That's it →</button>
+      <button class="btn-secondary" onclick="goTo('screen-guided-g1')">← Back</button>
+    </div>
+  </div>
+
+  <!-- GUIDED RESET: Screen G3 — Body check -->
+  <div class="screen" id="screen-guided-g3">
+    <div class="card">
+      <div class="card-eyebrow">Guided Reset · 3 of 4</div>
+      <div class="card-heading">What does your <em>body</em> need right now?</div>
+      <div class="card-subtext">Not what you should do. Not what would be productive. Energy lives in your body first — not up here. What does it actually need?</div>
+      <div class="choices" id="guidedG3Choices" style="gap:8px">
+        <button class="choice-btn" style="padding:11px 14px" onclick="selectGuidedG3(this,'food-water')">
+          <span class="choice-icon" style="font-size:16px">🥤</span>
+          <div><div class="choice-label" style="font-size:13px">Food or water</div><div class="choice-desc">Honestly, when did you last eat something real?</div></div>
+        </button>
+        <button class="choice-btn" style="padding:11px 14px" onclick="selectGuidedG3(this,'movement')">
+          <span class="choice-icon" style="font-size:16px">🚶</span>
+          <div><div class="choice-label" style="font-size:13px">To move</div><div class="choice-desc">Even just standing up and opening your chest</div></div>
+        </button>
+        <button class="choice-btn" style="padding:11px 14px" onclick="selectGuidedG3(this,'quiet')">
+          <span class="choice-icon" style="font-size:16px">🤫</span>
+          <div><div class="choice-label" style="font-size:13px">Quiet</div><div class="choice-desc">Two minutes with no one needing anything from you</div></div>
+        </button>
+        <button class="choice-btn" style="padding:11px 14px" onclick="selectGuidedG3(this,'sleep')">
+          <span class="choice-icon" style="font-size:16px">😴</span>
+          <div><div class="choice-label" style="font-size:13px">Sleep, honestly</div><div class="choice-desc">You can't pour from an empty cup — this is the cup</div></div>
+        </button>
+        <button class="choice-btn" style="padding:11px 14px" onclick="selectGuidedG3(this,'connection')">
+          <span class="choice-icon" style="font-size:16px">🫂</span>
+          <div><div class="choice-label" style="font-size:13px">Connection</div><div class="choice-desc">A real conversation with someone who gets it</div></div>
+        </button>
+      </div>
+      <button class="btn-primary" id="guidedG3Btn" onclick="goTo('screen-guided-g4')" disabled style="margin-top:20px">Keep going →</button>
+      <button class="btn-secondary" onclick="goTo('screen-guided-g2')">← Back</button>
+    </div>
+  </div>
+
+  <!-- GUIDED RESET: Screen G4 — Credit -->
+  <div class="screen" id="screen-guided-g4">
+    <div class="card">
+      <div class="card-eyebrow">Guided Reset · 4 of 4</div>
+      <div class="card-heading">Now give yourself <em>actual credit.</em></div>
+      <div class="card-subtext">Not toxic positivity. Honest recognition. You did hard things today — things that don't make the list but cost real energy. List as many as you can think of.</div>
+      <div style="margin-bottom:16px">
+        <textarea id="guidedCredit" rows="3" placeholder="I kept going even when I had nothing left... I made it through another day... I stayed calm longer than I thought I could..."></textarea>
+      </div>
+      <div style="background:rgba(242,217,208,0.3);border-radius:12px;padding:14px 16px;font-size:13px;color:var(--text-mid);line-height:1.65;font-weight:300">
+        💛 The bottom line: you showed up. That counts. Every single time.
+      </div>
+      <button class="btn-primary" id="guidedG4Btn" onclick="goToAnchor()" disabled style="margin-top:20px">Get my reset →</button>
+      <button class="btn-secondary" onclick="goTo('screen-guided-g3')">← Back</button>
     </div>
   </div>
 
@@ -554,6 +740,14 @@
     <button class="btn-secondary" style="max-width:480px;width:100%;margin-top:12px" onclick="goTo('screen-welcome')">Return to home</button>
   </div>
 
+  <!-- SCREEN: Full History -->
+  <div class="screen" id="screen-history">
+    <div class="card" id="historyCard">
+      <!-- filled dynamically -->
+    </div>
+    <button class="btn-secondary" style="max-width:480px;width:100%;margin-top:12px" onclick="goTo('screen-welcome')">← Back to home</button>
+  </div>
+
 </div>
 
 <script>
@@ -562,12 +756,18 @@
     mode: null,
     trigger: null,
     triggerTime: null,
+    triggerCustomText: null,
     load: null,
+    bodyNeed: null,
     quickAction: null,
-    entries: []
+    quickDrop: null,
+    quickTask: null,
+    entries: [],
+    userName: null,
+    userEmail: null
   };
 
-  const STORAGE_KEY = 'resetRoom_entries_v1';
+  const STORAGE_KEY = 'resetRoom_entries_v2';
 
   // Load persisted entries
   function loadEntries() {
@@ -580,6 +780,14 @@
   function saveEntry(entry) {
     state.entries.push(entry);
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state.entries)); } catch(e) {}
+  }
+
+  // Cycle = which set of 5 we're on (0-indexed). Progress within current cycle = entries % 5
+  function getCycleInfo() {
+    const total = state.entries.length;
+    const completedCycles = Math.floor(total / 5);
+    const positionInCycle = total % 5;  // 0 means just finished a cycle / fresh start
+    return { total, completedCycles, positionInCycle };
   }
 
   // ─── Screen management ───────────────────────────────────────────────────────
@@ -596,12 +804,16 @@
   }
 
   function updateProgress(screenId) {
-    const steps = ['screen-bandwidth','screen-trigger','screen-quick','screen-guided','screen-response','screen-pattern'];
-    const idx = steps.indexOf(screenId);
+    const quickSteps = ['screen-bandwidth','screen-trigger','screen-quick-q1','screen-quick-q2','screen-quick-q3','screen-response','screen-pattern'];
+    const guidedSteps = ['screen-bandwidth','screen-trigger','screen-guided-g1','screen-guided-g2','screen-guided-g3','screen-guided-g4','screen-response','screen-pattern'];
     const bar = document.getElementById('progressBar');
     bar.innerHTML = '';
+
+    let steps = quickSteps;
+    let idx = quickSteps.indexOf(screenId);
+    if (idx < 0) { steps = guidedSteps; idx = guidedSteps.indexOf(screenId); }
+
     if (idx < 0) {
-      // Welcome screen — show 6 soft placeholder dots
       bar.classList.add('home-dots');
       for (let i = 0; i < 6; i++) {
         const dot = document.createElement('div');
@@ -635,7 +847,7 @@
     state.triggerTime = getCurrentTimeOfDay();
     // Short delay then advance
     setTimeout(() => {
-      goTo(state.mode === 'quick' ? 'screen-quick' : 'screen-guided');
+      goTo(state.mode === 'quick' ? 'screen-quick-q1' : 'screen-guided-g1');
     }, 300);
   }
 
@@ -669,7 +881,7 @@
     state.triggerCustomText = text;
     state.triggerTime = getCurrentTimeOfDay();
     setTimeout(() => {
-      goTo(state.mode === 'quick' ? 'screen-quick' : 'screen-guided');
+      goTo(state.mode === 'quick' ? 'screen-quick-q1' : 'screen-guided-g1');
     }, 200);
   }
 
@@ -684,16 +896,33 @@
     return 'night';
   }
 
-  // ─── Quick Reset ─────────────────────────────────────────────────────────────
-  function selectQuick(btn, action) {
-    document.querySelectorAll('.quick-btn').forEach(b => b.classList.remove('selected'));
+  // ─── Quick Reset handlers ─────────────────────────────────────────────────────
+  function selectQuickQ1(btn, action) {
+    document.querySelectorAll('#screen-quick-q1 .quick-btn').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
     state.quickAction = action;
-    document.getElementById('quickNextBtn').disabled = false;
-    document.getElementById('selfValidationRow').style.display = 'block';
+    document.getElementById('quickQ1Btn').disabled = false;
   }
 
-  // ─── Load selection (guided) ─────────────────────────────────────────────────
+  function selectQuickQ2(btn, drop) {
+    document.querySelectorAll('#quickQ2Choices .choice-btn').forEach(b => {
+      b.style.background = ''; b.style.borderColor = '';
+    });
+    btn.style.background = 'rgba(242,217,208,0.6)';
+    btn.style.borderColor = 'var(--rose)';
+    state.quickDrop = drop;
+    document.getElementById('quickQ2Btn').disabled = false;
+  }
+
+  function selectQuickQ3(btn, task) {
+    document.querySelectorAll('#screen-quick-q3 .quick-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    state.quickTask = task;
+    document.getElementById('quickQ3Btn').disabled = false;
+    document.getElementById('quickCreditRow').style.display = 'block';
+  }
+
+  // ─── Guided Reset handlers ────────────────────────────────────────────────────
   function selectLoad(btn, loadKey) {
     document.querySelectorAll('#loadChoices .choice-btn').forEach(b => {
       b.style.background = ''; b.style.borderColor = '';
@@ -701,17 +930,29 @@
     btn.style.background = 'rgba(242,217,208,0.5)';
     btn.style.borderColor = 'var(--rose)';
     state.load = loadKey;
-    checkGuidedReady();
+    document.getElementById('guidedG2Btn').disabled = false;
   }
 
-  function checkGuidedReady() {
-    const why = document.getElementById('guidedWhy').value.trim();
-    document.getElementById('guidedNextBtn').disabled = !(state.load && why.length > 5);
+  function selectGuidedG3(btn, need) {
+    document.querySelectorAll('#guidedG3Choices .choice-btn').forEach(b => {
+      b.style.background = ''; b.style.borderColor = '';
+    });
+    btn.style.background = 'rgba(242,217,208,0.5)';
+    btn.style.borderColor = 'var(--rose)';
+    state.bodyNeed = need;
+    document.getElementById('guidedG3Btn').disabled = false;
   }
 
   document.addEventListener('input', e => {
-    if (e.target.id === 'guidedWhy') checkGuidedReady();
+    if (e.target.id === 'guidedWhy') {
+      document.getElementById('guidedG1Btn').disabled = e.target.value.trim().length < 5;
+    }
+    if (e.target.id === 'guidedCredit') {
+      document.getElementById('guidedG4Btn').disabled = e.target.value.trim().length < 3;
+    }
   });
+
+
 
   // ─── Navigate to AI screen ───────────────────────────────────────────────────
   function goToAnchor() {
@@ -719,52 +960,306 @@
     generateReset();
   }
 
-  // ─── AI Call ─────────────────────────────────────────────────────────────────
+  // ─── Curated Reset Content Library ───────────────────────────────────────────
+  // All content drawn from Darz's actual voice, teachings, and videos.
+  // Structured by trigger + load/context so responses feel personal, not generic.
+
+  const RESETS = {
+
+    validation: {
+      'kids-not-listening': [
+        "You've asked the same thing five times and nobody moved. That's not a parenting failure — that's a full grown adult running on empty trying to manage tiny humans who genuinely cannot regulate themselves yet.",
+        "Asking the same thing over and over and being ignored is genuinely exhausting. Not just annoying — actually draining. Your patience isn't unlimited, and that's not a character flaw.",
+        "You're not overreacting. Repeating yourself a hundred times while also holding every other piece of life together — of course that breaks you eventually.",
+        "Here's the thing nobody says out loud: it's not even the kids that break you. It's the fact that you were already at the bottom of the tank before they even started.",
+        "You said it nicely. Then you said it again. Then again. And still nothing. I get it. That specific loop is its own kind of drain."
+      ],
+      'loud-chaos': [
+        "Everything at once — noise, demands, mess, zero breathing room. Of course you're losing it. Your nervous system was not designed for this level of constant input with no off switch.",
+        "When everything is loud and needs something from you all at the same time, that's not a manageable situation. That's just too much. You're not failing. You're overwhelmed. Those are different things.",
+        "There's a reason you feel like you can't think straight. You literally can't — your brain is fielding too many inputs at once. That's not weakness. That's just how brains work.",
+        "Chaos that never quiets down isn't just loud — it's relentless. And relentless wears people out. Fully functioning, capable, loving people. You included.",
+        "You know what's interesting? When you're right in the middle of chaos like this, your brain genuinely cannot tell the difference between a loud house and a real emergency. So your body reacts like it's both. That's exhausting."
+      ],
+      'carrying-alone': [
+        "Nobody sees the half of it, do they. The mental tabs you're running. The things you tracked and remembered and figured out quietly so nobody else had to. That invisible load is real, and it's heavy.",
+        "You're carrying the whole thing and the weight of it not being noticed might honestly be harder than the weight itself. That's not nothing. That matters.",
+        "There is a reason it feels like you're always the last one to sit down. Because you are. You're running the whole system and nobody handed you a manual.",
+        "The invisible work — the anticipating, the coordinating, the remembering, the worrying — it doesn't show up anywhere. There's no checklist for it. But it costs just as much as everything else.",
+        "I'm not going to tell you you're doing too much. I'm just going to say: what you're carrying is real. And the fact that you've been doing it quietly doesn't mean it's been easy."
+      ],
+      'exhausted-touched-out': [
+        "Nothing left to give and someone still needs something. That specific kind of exhaustion — where your body literally wants to not be touched — is real. You're not a bad mom. You're a human who needs to fill her own cup.",
+        "Running on empty is not a mindset problem. Sleep deprivation, constant demands, no real off switch — your body is telling you something true right now. Honest.",
+        "You gave everything today. And yesterday. And the day before. The tank is just empty. That's not a flaw — that's physics.",
+        "Being touched out is real. It doesn't mean you love them less. It means your nervous system has been 'on' for so long it literally needs quiet and space to come back online.",
+        "When you've been needed all day — like, really needed, no breaks — by the end of it you need to stop being someone's person for a minute. That's not selfish. That's just how humans work."
+      ],
+      'snapped-and-ashamed': [
+        "You snapped and now the guilt is louder than everything else. I know that feeling. But here's what's true: you snapped because you were already carrying too much, not because something is wrong with you.",
+        "The shame spiral after a hard moment is almost worse than the moment itself. But snapping doesn't make you a bad mom — it makes you a mom who hit her limit. That's different.",
+        "You're not the voice in your head right now. That harsh critic is not the truth about who you are. You had a hard moment. That's it. It doesn't define you.",
+        "The fact that you feel bad about it? That's actually proof that you care deeply. People who don't care don't spiral like this. You snapped because you're human and you were maxed out. That's the whole story.",
+        "That moment already happened and you can't undo it. What you can do is not make it mean more than it does. One hard moment in one hard day is not your whole story as a mom."
+      ],
+      'other': [
+        "Whatever just happened — it makes total sense that you're struggling with it. You don't have to have a 'good enough' reason to need a reset. Feeling this way is enough.",
+        "You came here instead of just pushing through. That alone tells me something — you know you needed a pause. That's not weakness. That's actually really smart.",
+        "Life is hard, and what you're dealing with is hard. You don't have to minimize it or compare it to anyone else's situation. It's hard for you right now and that's enough.",
+        "I don't know exactly what happened, but I know this: you showed up for yourself by stopping. That matters. Even when — especially when — everything else still feels unresolved.",
+        "Sometimes things hit you and you can't even fully explain why. It's okay if you can't name it. You still deserve a minute to just breathe and reset."
+      ]
+    },
+
+    reframe: {
+      'tracking': [
+        "This isn't about who you are. It's about what you're carrying — a full mental system nobody else is running.",
+        "The problem isn't your capacity. It's that you're storing everything in your head with nowhere to put it down. No wonder it's heavy.",
+        "Decision fatigue is real. The fact that you can barely think straight right now isn't laziness — it's what happens when your brain has been the family's operating system all day.",
+        "You are not scattered. You are managing too many open tabs in a browser that was only designed for a few."
+      ],
+      'anticipating': [
+        "You're not behind. You're just doing three people's thinking at once. That's not sustainable for anyone.",
+        "Thinking ahead for everyone is an invisible job. The fact that it looks effortless from the outside doesn't mean it costs nothing.",
+        "Anticipating everything for everyone is a full-time job that nobody assigned to you — you just picked it up because someone had to. You can put some of it down.",
+        "Your brain is working overtime trying to stay ten steps ahead so nothing falls through the cracks. That's not anxiety. That's a skill that's being overused."
+      ],
+      'decision-fatigue': [
+        "By this point in the day your brain has made hundreds of decisions. It's not lazy — it's depleted. That's biology, not a character flaw.",
+        "Motivation isn't what gets things done, and willpower isn't unlimited. You've used yours. That's allowed.",
+        "When your brain is at decision zero, everything feels harder than it is. That's not weakness — that's what happens at the end of a day where you've been making calls all day long.",
+        "The bottom line is: you can't pre-decide everything. But the more you can batch and routinize, the less you drain the tank on the small stuff. That energy is yours to keep."
+      ],
+      'coordination': [
+        "You're not falling apart. You're running a full logistics operation with no admin support.",
+        "The amount you coordinate invisibly every single day — if someone handed you an invoice for that work, it would be staggering. You're doing a lot.",
+        "Coordinating everyone's lives is real work. Mental work. The fact that it doesn't produce a visible output doesn't mean it costs nothing.",
+        "You are not overwhelmed because you're weak. You're overwhelmed because you're doing the work of multiple people and calling it 'just being a mom.'"
+      ],
+      'emotional-labor': [
+        "You're the anchor. And anchors don't float, they hold. That's exhausting in a way that doesn't show up anywhere.",
+        "Everyone brings their hard stuff to you because you're safe. That's a gift you give them. But it costs you something real.",
+        "Being the emotional anchor means absorbing everyone else's weight on top of your own. At some point the cup doesn't just run low — it needs to be actively refilled.",
+        "You can't pour from an empty cup. I know you know that. But knowing it and actually protecting time to fill it are two completely different things — and the second one is harder."
+      ],
+      'default': [
+        "This isn't about who you are. It's about what you're carrying right now.",
+        "You're not falling apart. You're running on low battery. Those are completely different things.",
+        "You don't need more discipline. You need fewer decisions and permission to start where you are.",
+        "The bottom line is: you were not built to do all of this alone. The fact that you have been doesn't mean you should keep doing it exactly like this.",
+        "Honestly? The fact that this is hard doesn't mean you're doing it wrong. It means it's actually hard. Life is hard. That's allowed to be true."
+      ]
+    },
+
+    rightNow: {
+      'breathe': [
+        "Take three real breaths right now — not rushed ones. In through your nose, out through your mouth. That's your nervous system getting actual proof you're okay.",
+        "Just breathe. Three slow ones. I know it sounds like nothing but it's actually your body's fastest reset button — and right now that's all you need.",
+        "In through your nose for four counts, hold for four, out for four. Do it once. Then again. Your body knows how to calm itself down — it just needs permission."
+      ],
+      'move': [
+        "Stand up and shake it out — literally. Roll your shoulders, open your chest, walk to a different room. Your body needs to know it's not stuck.",
+        "Get up. Not to do anything. Just to change your physical position. Walk to the kitchen, walk back, open a window. Motion tells your nervous system you're not frozen.",
+        "Your body and brain are connected. Right now your brain is spinning — so move your body first. Even five jumping jacks, even just rolling your neck. Interrupt the freeze."
+      ],
+      'bathroom': [
+        "Go to the bathroom and close the door. Sixty seconds alone. You don't have to do anything in there — just exist without someone needing you for one minute.",
+        "Step away for sixty seconds. The bathroom, outside, your car — anywhere you can be a person instead of someone's mom for just a moment.",
+        "Find thirty seconds of physical distance from whatever just happened. Even just standing in another room alone. Your nervous system needs a brief 'we're safe' signal."
+      ],
+      'phone-down': [
+        "Put the phone face down right now and leave it there for ten minutes. Scrolling isn't rest — it just feels like it. Real rest is quiet.",
+        "The phone goes down. Not because screens are evil, but because your brain needs actual quiet right now — not more input. Ten minutes. That's it.",
+        "Scrolling to decompress is a complete fallacy — your brain is still working, still processing, still on. Put it down and just sit for a few minutes. That's real rest."
+      ],
+      'food-water': [
+        "Drink a glass of water right now. Actually do it. Then eat something — anything. You cannot pour from an empty cup and this is literally the cup.",
+        "When did you last eat something real? Go do that. Sleep and food are the floor, not the reward — and you can't build anything on a floor you've removed.",
+        "Water first. Right now. Then something to eat, even small. Your body needs the basics before it can handle anything else. That's not weakness — that's just how bodies work."
+      ],
+      'movement': [
+        "Get up from wherever you are and just move. Walk to another room, do five stretches, shake your hands out. Your body is frozen and it needs proof it can move.",
+        "Energy starts in your body, not your head. Right now your body is probably tense, shallow-breathing, tight. Stand up and open your chest. Three deep breaths. That changes your state more than you think.",
+        "Don't wait for your mind to decide you have the energy to move. Move first. Even just standing up and rolling your shoulders. Your brain will follow once your body leads."
+      ],
+      'quiet': [
+        "Find two minutes alone if you can — bathroom, outside, in your car. Not to think. Not to plan. Just to exist without anyone needing anything. That's it.",
+        "Two minutes. No one talking at you, no one needing something. Even if you have to lock a door to get it. Your nervous system needs to hear quiet.",
+        "Go somewhere — anywhere — that isn't where everyone else is for sixty seconds. You don't have to solve anything. Just stand there and breathe."
+      ],
+      'sleep': [
+        "Tonight — not tomorrow, tonight — go to bed twenty minutes earlier than usual. Just twenty. That's one less episode, one less scroll. Your future self will feel it.",
+        "Sleep and food are the floor, not the reward. If you've been skimping on sleep, nothing else is going to fully work until that starts to shift. Even twenty minutes earlier tonight is something.",
+        "Your body isn't broken. It's under-resourced. The most powerful thing you can do for tomorrow's version of yourself is go to bed earlier tonight. That's not giving up — that's strategy."
+      ],
+      'connection': [
+        "Text one person who gets it. Not to unload everything — just 'hard day.' Sometimes being seen by one person who understands is enough to take the edge off.",
+        "Who's the one person you can be completely real with? Even a three-word text. Being witnessed by even one person who gets it shifts something real.",
+        "Reach out to someone tonight — not to perform how you're doing, but to actually say 'this was hard.' Connection and giving can actually give energy back when it's real."
+      ],
+      'one-dish': [
+        "Wash one dish. Literally just one. The goal isn't a clean kitchen — it's proof for your brain that you can do something. That proof matters more than you think.",
+        "Pick up one thing. Wash one dish. Wipe one surface. Your brain needs a tiny win right now — not because it matters in the grand scheme, but because motion breaks the freeze.",
+        "One dish. Done. That small thing your brain dismisses as 'that won't make a dent'? It actually will — not on the kitchen, on you. Just try it."
+      ],
+      'one-thing-away': [
+        "Pick up the one thing right in front of you and put it where it goes. Just that one thing. Your brain needs a tiny win right now, and that counts.",
+        "Look around and find the most obvious thing to do. Do just that one thing. Not the whole list — the one visible, easy thing. Small steps snowball faster than you think.",
+        "The goal isn't progress. It's motion. Pick up whatever's right in front of you and put it somewhere. That's enough to get the ball rolling."
+      ],
+      'laundry': [
+        "Switch the laundry. Two minutes, done. Small and real — that's the kind of action that tells your nervous system you're not frozen.",
+        "Two-minute power move: switch the laundry, start the dishwasher, take out the recycling. Pick one. Do it. Then you've already done something real today.",
+        "Here's a tiny thing that will make tomorrow easier: go switch the laundry right now. Not to be productive. Just to give your brain proof you can move forward."
+      ],
+      'water': [
+        "Go drink water right now. Seriously — when did you last? Your body is probably running on fumes and this is the smallest possible thing you can do for it.",
+        "Water. That's it. Go get a glass right now. Your body is made of it and you've probably been ignoring it all day. Start there.",
+        "The simplest, stupidest reset that actually works: drink a full glass of water. Stand in your kitchen and drink it slowly. Two minutes. Done."
+      ],
+      'default': [
+        "Do one tiny physical thing — wash a dish, put one thing away, drink a glass of water. The goal is just motion. Your brain needs proof you can move right now.",
+        "Something small. Right now. The goal is not to fix everything — just to break the freeze. Pick one tiny thing in front of you and do it.",
+        "Drink water. Stand up. Put one thing away. The smallest possible action counts. Your brain needs proof that you can move, and small is enough."
+      ]
+    },
+
+    tomorrowAnchor: {
+      'kids-not-listening': [
+        "Tomorrow, before the moment where no one listens — pre-decide one rule and say it once with conviction. When you've already decided and you mean it, kids feel that. And they push less.",
+        "Try pre-deciding one expectation for tomorrow so you're not making it up in the middle of the chaos. 'After dinner, everyone picks up five things.' Decided once. Done.",
+        "One thing you can pre-decide tonight: what happens at bedtime, what happens after school, what the screen rule is. Say it with conviction tomorrow. Kids do way better when they know you mean it.",
+        "Tomorrow, give the direction once and then stop negotiating. The moment you start defending the rule, they know there's room to push. Decide once, say it once, move on."
+      ],
+      'loud-chaos': [
+        "Tomorrow, build one five-minute quiet window into the day — even just after dinner, even in the bathroom. Schedule it like it's real, because your nervous system needs it to be real.",
+        "Pick one thing you can batch or pre-decide tonight so tomorrow has one fewer decision in it. Fewer decisions means a longer fuse. That matters.",
+        "Build in a buffer tomorrow — even five minutes between getting home and the next thing starting. You can't go from work mode to mom mode to evening routine without landing somewhere in between.",
+        "Tomorrow, try setting expectations before the chaos starts instead of in the middle of it. Even just saying out loud: 'here's what's happening tonight.' A little structure goes a long way."
+      ],
+      'carrying-alone': [
+        "Write one thing down tonight that's living in your head — just one tab to close. Not to solve it. Just to get it out of your brain and onto paper so you can actually rest.",
+        "Tomorrow, notice one thing you're doing invisibly for someone who could do it themselves. You don't have to stop doing it yet — just notice it. Awareness is the first tiny step.",
+        "One thing: make a running list somewhere of everything you're tracking. Not to manage it — just to see it. When you can see the list, it stops eating your brain alive.",
+        "Tomorrow's one thing: pick one invisible task you've been carrying and either write it down, hand it off, or decide it doesn't need to happen. Just one. That's enough."
+      ],
+      'exhausted-touched-out': [
+        "Tonight — not someday, tonight — protect ten minutes that are just yours. Even after everyone's in bed. Even if it's just sitting quietly. Schedule it. It doesn't happen if it's not protected.",
+        "Pick one thing you can remove from tomorrow's load — not reschedule, actually drop. Good enough really is good enough sometimes. That's not giving up. That's survival math.",
+        "One non-negotiable for tomorrow: before anyone needs you, give yourself five minutes first. Even in the bathroom with the door locked. It doesn't have to be long. It has to happen.",
+        "Tomorrow, think about what fills your cup — even a little. Not a grand self-care gesture. One small thing that belongs to you. Schedule it like an appointment. Protect it."
+      ],
+      'snapped-and-ashamed': [
+        "Tomorrow morning, notice the moment right before you usually hit your limit. That's your yellow light — the moment to interrupt before the red. One pause there changes the whole thing.",
+        "Build in one tiny buffer tomorrow — five minutes between work and kids, ten minutes before the dinner rush. Not to be productive. Just to land before the next thing starts.",
+        "Tomorrow, pay attention to when your tank starts going low — not when it hits empty. That's your signal. You don't have to fix it, just notice it. Noticing is the first step.",
+        "One thing for tomorrow: if you feel yourself getting close to the edge, that's your cue to do one tiny regulating thing before the moment breaks. A breath, a walk to another room, anything. Interrupt before the red."
+      ],
+      'other': [
+        "Tomorrow, batch one thing that's been eating at your brain. Admin stuff, errands, appointments — pick a day and a time and just decide that's when it happens. Then forget about it until then.",
+        "Pre-decide one thing tonight so tomorrow you have one fewer choice to make. It sounds small but decision fatigue is real, and every decision you don't have to make is energy back in the tank.",
+        "One thing you can do before bed: write down everything that's swirling around in your head. Not to solve it — just to get it out. Your brain can't rest when it's trying to remember everything.",
+        "Tomorrow, try starting with your body before your to-do list. Even five minutes of movement, fresh air, or quiet before the day gets loud. It changes how the whole day feels."
+      ]
+    }
+  };
+
+  function pickRandom(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
+
+  // Fallback if API unavailable — still curated, still varied
+  function buildFallbackResponse() {
+    const trigger = state.trigger || 'other';
+    const load = state.load || 'default';
+    const validation = pickRandom(RESETS.validation[trigger] || RESETS.validation['other']);
+    const reframe = pickRandom(RESETS.reframe[load] || RESETS.reframe['default']);
+    const rightNowKey = state.bodyNeed || state.quickTask || state.quickAction || 'default';
+    const rightNowPool = RESETS.rightNow[rightNowKey] || RESETS.rightNow['default'];
+    const rightNow = Array.isArray(rightNowPool) ? pickRandom(rightNowPool) : rightNowPool;
+    const anchor = pickRandom(RESETS.tomorrowAnchor[trigger] || RESETS.tomorrowAnchor['other']);
+    const creditText = state.mode === 'quick'
+      ? document.getElementById('selfValidation')?.value?.trim()
+      : document.getElementById('guidedCredit')?.value?.trim();
+    const creditLine = creditText
+      ? `\n\nAnd honestly — what you just wrote? "${creditText.split(/[.\n]/)[0]}" — that's real. Don't scroll past that.`
+      : '';
+    return `${validation}\n\n${reframe}\n\n${rightNow}${creditLine}\n\n${anchor} That's enough for today.`;
+  }
+
+  // ─── Generate Reset — API with brand voice prompt, curated fallback ───────────
   async function generateReset() {
     document.getElementById('aiContent').innerHTML = '<div class="loading-dots"><span></span><span></span><span></span></div>';
     document.getElementById('doneBtn').style.display = 'none';
 
-    const triggerLabel = state.trigger === 'other'
-      ? (state.triggerCustomText || 'something overwhelming that she described in her own words')
-      : ({
-      'kids-not-listening': "her kids won't listen and she's asked multiple times",
-      'loud-chaos': "everything feels loud and chaotic with no breathing room",
-      'carrying-alone': "she's carrying too much invisible load completely alone",
-      'exhausted-touched-out': "she's exhausted and touched out with nothing left to give",
-      'snapped-and-ashamed': "she snapped at her kids and now feels shame and guilt"
-    }[state.trigger] || state.trigger);
+    const trigger = state.trigger || 'other';
+    const load = state.load || 'default';
+    const rightNowKey = state.bodyNeed || state.quickTask || state.quickAction || 'default';
+
+    // Pull a few curated lines to anchor the AI to Darz's actual voice
+    const sampleValidation = pickRandom(RESETS.validation[trigger] || RESETS.validation['other']);
+    const sampleReframe = pickRandom(RESETS.reframe[load] || RESETS.reframe['default']);
+    const sampleRightNowPool = RESETS.rightNow[rightNowKey] || RESETS.rightNow['default'];
+    const sampleRightNow = Array.isArray(sampleRightNowPool) ? pickRandom(sampleRightNowPool) : sampleRightNowPool;
+    const sampleAnchor = pickRandom(RESETS.tomorrowAnchor[trigger] || RESETS.tomorrowAnchor['other']);
+
+    const triggerLabel = {
+      'kids-not-listening': "kids not listening after asking multiple times",
+      'loud-chaos': "everything feeling loud, chaotic, overwhelming",
+      'carrying-alone': "carrying the invisible load completely alone",
+      'exhausted-touched-out': "exhausted and touched out with nothing left",
+      'snapped-and-ashamed': "snapped at the kids and now feeling shame"
+    }[trigger] || (state.triggerCustomText || "something hard she described herself");
 
     const loadLabel = {
-      'tracking': 'tracking and remembering everything',
-      'anticipating': 'anticipating what comes next for everyone',
+      'tracking': 'tracking everything in her head',
+      'anticipating': 'always anticipating what comes next for everyone',
       'decision-fatigue': 'decision fatigue from too many choices',
-      'coordination': 'coordinating everyone\'s schedules and lives',
-      'emotional-labor': 'being the emotional anchor for the entire family'
-    }[state.load] || state.load;
+      'coordination': 'coordinating everyone\'s entire lives',
+      'emotional-labor': 'being the emotional anchor for the whole family'
+    }[load] || '';
+
+    const creditText = state.mode === 'quick'
+      ? document.getElementById('selfValidation')?.value?.trim()
+      : document.getElementById('guidedCredit')?.value?.trim();
 
     const modeContext = state.mode === 'quick'
-      ? `She chose a quick reset (${state.quickAction?.replace('-',' ')}).`
-      : `She reflected that: "${document.getElementById('guidedWhy')?.value || ''}". The invisible load was: ${loadLabel}.`;
+      ? `She did a quick reset: moved her body (${state.quickAction?.replace(/-/g,' ')}), chose to let go of something, did a tiny task (${state.quickTask?.replace(/-/g,' ')}).`
+      : `She reflected on what happened in her own words. The invisible load underneath: ${loadLabel}. Her body needs: ${state.bodyNeed?.replace(/-/g,' ') || 'unclear'}.`;
 
-    const prompt = `You are a warm, wise companion for exhausted working moms. A mom is using The Reset Room — a tool to help her recover from overwhelmed moments.
+    const prompt = `You're writing a short "for you" reset note for a working mom who just used a reset tool created by Darz — a busy single working mom who teaches from inside the struggle, not from a pedestal.
 
-Her situation: ${triggerLabel}
+DARZ'S VOICE — write to match this exactly:
+- Conversational, like talking to a friend on the couch
+- Honest and a little unpolished — thinks out loud, self-corrects, real language  
+- Validates without enabling. Acknowledges hard things without removing responsibility.
+- Anti-hustle, anti-toxic-positivity, anti-"just wake up earlier"
+- Uses phrases like: "the bottom line is", "honestly", "tiny steps", "future self", "fill your cup", "that's enough for today"
+- Never says: hustle, grind, optimize, dominate, "just be positive", "you've got this mama" (overused)
+- Gentle accountability — warm but grounded
+
+HERE'S WHAT HAPPENED:
+Trigger: ${triggerLabel}
 Time of day: ${state.triggerTime}
 ${modeContext}
-${document.getElementById('guidedCredit')?.value ? `She gave herself credit for: "${document.getElementById('guidedCredit').value}"` : ''}
-${document.getElementById('selfValidation')?.value ? `Her self-acknowledgment: "${document.getElementById('selfValidation').value}"` : ''}
+${creditText ? `She gave herself credit for: "${creditText}"` : ''}
 
-Write a reset response with EXACTLY this structure — no headers, no markdown, just flowing warm text broken into 4 short paragraphs:
+USE THESE AS VOICE ANCHORS — your response should feel like it belongs in the same family as these, but be freshly written (not copied):
+• Validation anchor: "${sampleValidation}"
+• Reframe anchor: "${sampleReframe}"  
+• Right now anchor: "${sampleRightNow}"
+• Tomorrow anchor: "${sampleAnchor}"
 
-1. VALIDATION (2-3 sentences): Name exactly what happened and why it makes total sense that she feels this way. Use the specific trigger. Be specific, not generic. Start with empathy not advice.
+Write 4 short paragraphs. No headers. No bullet points. No markdown. Just plain warm text:
 
-2. REFRAME (2 sentences): Gently shift the lens. Not toxic positivity — just a true, grounding reframe. E.g. "This isn't about who you are. It's about what you're carrying."
+1. VALIDATION: Make her feel genuinely seen. Name what happened specifically. 2–3 sentences. No advice yet.
+2. REFRAME: One gentle truth that shifts the lens without toxic positivity. 2 sentences.
+3. RIGHT NOW: One tiny, concrete, physical thing she can do in the next 5 minutes. Stupidly small on purpose. Name it specifically. 2–3 sentences.
+4. TOMORROW: One tiny structural thing — pre-decide, batch, simplify, protect time. End warm. 2 sentences.
 
-3. RIGHT NOW (2-3 sentences): One very small, concrete action for the next 5 minutes to restore a tiny bit of calm or agency. Make it physical or behavioral — not abstract.
+${creditText ? `If it feels natural, weave in a brief acknowledgment of what she wrote about herself. Keep it short — one sentence woven into one of the paragraphs.` : ''}
 
-4. TOMORROW ANCHOR (2 sentences): One tiny structural shift that could reduce this specific trigger tomorrow. Practical, not preachy. End with warmth.
-
-Tone: like a wise, warm friend — not a therapist, not a life coach. Conversational, grounded, human. Use "you" throughout. Keep the whole thing under 200 words.`;
+Under 180 words total. Sound like Darz, not a life coach.`;
 
     try {
       const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -772,19 +1267,25 @@ Tone: like a wise, warm friend — not a therapist, not a life coach. Conversati
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           model: 'claude-sonnet-4-20250514',
-          max_tokens: 1000,
+          max_tokens: 400,
           messages: [{ role: 'user', content: prompt }]
         })
       });
       const data = await res.json();
-      const text = data.content?.map(c => c.text || '').join('') || '';
-      renderResponse(text);
+      const text = data.content?.map(c => c.text || '').join('').trim();
+      if (text && text.length > 40) {
+        renderResponse(text);
+      } else {
+        renderResponse(buildFallbackResponse());
+      }
     } catch(e) {
-      renderResponse("Something gentle: you showed up for yourself today by pausing. That matters more than you know.\n\nWhatever just happened, it makes sense that it was hard. You're carrying a lot.\n\nRight now, take three slow breaths. Put your hand on your chest. You're okay.\n\nTomorrow, before the chaos starts, give yourself one minute of silence — just one. You deserve that much.");
+      renderResponse(buildFallbackResponse());
     }
   }
 
   function renderResponse(text) {
+    // Store the generated text so finishReset can save it
+    state.lastResetText = text;
     const paragraphs = text.split(/\n\n+/).filter(p => p.trim());
     let html = '<div class="ai-bubble"><span class="ai-label">✦ For you</span>';
     paragraphs.forEach((p, i) => {
@@ -803,24 +1304,50 @@ Tone: like a wise, warm friend — not a therapist, not a life coach. Conversati
       triggerCustomText: state.triggerCustomText || null,
       triggerTime: state.triggerTime,
       load: state.load,
+      bodyNeed: state.bodyNeed || null,
       mode: state.mode,
+      resetText: state.lastResetText || null,
       date: new Date().toLocaleDateString('en-US', { month:'short', day:'numeric' }),
+      dateISO: new Date().toISOString(),
       hour: new Date().getHours()
     };
     saveEntry(entry);
     showPatternScreen();
   }
 
-  // ─── Pattern screen ───────────────────────────────────────────────────────────
-  function showPatternScreen() {
-    const count = state.entries.length;
-    const card = document.getElementById('patternCard');
+  // ─── Pattern screen — cycles of 5, all history preserved ─────────────────────
+  const TRIGGER_LABELS = {
+    'kids-not-listening': "Kids not listening",
+    'loud-chaos': "Loud & chaotic",
+    'carrying-alone': "Carrying too much alone",
+    'exhausted-touched-out': "Exhausted & touched out",
+    'snapped-and-ashamed': "Snapped & ashamed",
+    'other': "Something else"
+  };
+  const LOAD_LABELS = {
+    'tracking': 'tracking & remembering',
+    'anticipating': 'anticipating everything',
+    'decision-fatigue': 'decision fatigue',
+    'coordination': 'coordination load',
+    'emotional-labor': 'emotional labor'
+  };
 
-    if (count < 5) {
-      const remaining = 5 - count;
+  function showPatternScreen() {
+    const { total, completedCycles, positionInCycle } = getCycleInfo();
+    const card = document.getElementById('patternCard');
+    // "just completed a cycle" = positionInCycle === 0 and total > 0
+    const justFinishedCycle = positionInCycle === 0 && total > 0;
+
+    if (!justFinishedCycle) {
+      // Mid-cycle: show progress toward next pattern reveal
+      const countInCycle = positionInCycle;
+      const remaining = 5 - countInCycle;
       const pips = Array(5).fill(0).map((_, i) =>
-        `<div class="pip ${i < count ? 'filled' : ''}"></div>`
+        `<div class="pip ${i < countInCycle ? 'filled' : ''}"></div>`
       ).join('');
+      const cycleNote = completedCycles > 0
+        ? `<div style="font-size:12px;color:var(--dusty-mauve);margin-top:10px;font-weight:400">Cycle ${completedCycles + 1} · ${total} total resets logged</div>`
+        : '';
 
       card.innerHTML = `
         <div class="card-eyebrow">Pattern Progress</div>
@@ -829,70 +1356,45 @@ Tone: like a wise, warm friend — not a therapist, not a life coach. Conversati
         <div style="display:flex;align-items:center;gap:14px;background:rgba(255,255,255,0.5);border-radius:14px;padding:16px 18px;margin-top:4px">
           <div style="font-size:22px">✦</div>
           <div style="flex:1">
-            <div style="font-size:12px;color:var(--text-soft);margin-bottom:6px">${count} of 5 moments logged</div>
+            <div style="font-size:12px;color:var(--text-soft);margin-bottom:6px">${countInCycle} of 5 this cycle</div>
             <div style="display:flex;gap:5px">${pips}</div>
           </div>
           <div style="font-size:13px;color:var(--dusty-mauve);font-weight:500">${remaining} more</div>
         </div>
+        ${cycleNote}
         <div style="margin-top:20px;padding:16px;background:rgba(242,217,208,0.3);border-radius:12px;font-size:13px;color:var(--text-mid);line-height:1.6;font-weight:300">
           💛 Take a breath. You just did something kind for yourself.
         </div>
       `;
     } else {
-      // Generate pattern from entries
-      const timeGroups = {};
-      state.entries.forEach(e => {
-        timeGroups[e.triggerTime] = (timeGroups[e.triggerTime] || 0) + 1;
-      });
-      const topTime = Object.entries(timeGroups).sort((a,b) => b[1]-a[1])[0]?.[0] || 'evening';
-
-      const loadGroups = {};
-      state.entries.forEach(e => {
-        if (e.load) loadGroups[e.load] = (loadGroups[e.load] || 0) + 1;
-      });
-      const topLoad = Object.entries(loadGroups).sort((a,b) => b[1]-a[1])[0]?.[0] || 'tracking';
-
-      const loadLabels = {
-        'tracking': 'tracking & remembering',
-        'anticipating': 'anticipating everything',
-        'decision-fatigue': 'decision fatigue',
-        'coordination': 'coordination load',
-        'emotional-labor': 'emotional labor'
-      };
-
-      const triggerGroups = {};
-      state.entries.forEach(e => {
-        triggerGroups[e.trigger] = (triggerGroups[e.trigger] || 0) + 1;
-      });
-      const topTrigger = Object.entries(triggerGroups).sort((a,b) => b[1]-a[1])[0]?.[0] || '';
-      const triggerLabels = {
-        'kids-not-listening': "kids not listening",
-        'loud-chaos': "overwhelm and chaos",
-        'carrying-alone': "carrying too much alone",
-        'exhausted-touched-out': "exhaustion and being touched out",
-        'snapped-and-ashamed': "shame after snapping"
-      };
+      // Just completed a cycle — show pattern reveal based on the last 5 entries
+      const cycleEntries = state.entries.slice(-5);
+      const topTime = getTopKey(cycleEntries.map(e => e.triggerTime));
+      const topLoad = getTopKey(cycleEntries.filter(e => e.load).map(e => e.load));
+      const topTrigger = getTopKey(cycleEntries.map(e => e.trigger));
+      const cycleNum = completedCycles;
 
       card.innerHTML = `
         <div class="reveal-card">
-          <div class="r-label">✦ Your Invisible Load Pattern</div>
-          <div class="r-heading">Your hardest moments tend to happen in the <em>${topTime}</em>.</div>
+          <div class="r-label">✦ Cycle ${cycleNum} Pattern Unlocked</div>
+          <div class="r-heading">Your hardest moments this cycle happened in the <em>${topTime}</em>.</div>
           <div class="reveal-stat">
             <div class="rs-icon">🕐</div>
-            <div class="rs-text"><strong>Peak struggle time:</strong> ${topTime} — this is when your reserves are lowest</div>
+            <div class="rs-text"><strong>Peak struggle time:</strong> ${topTime} — this is when your reserves run lowest</div>
           </div>
-          <div class="reveal-stat">
+          ${topLoad ? `<div class="reveal-stat">
             <div class="rs-icon">⚖️</div>
-            <div class="rs-text"><strong>Biggest hidden load:</strong> ${loadLabels[topLoad] || topLoad} — this is what's actually draining you</div>
-          </div>
+            <div class="rs-text"><strong>Biggest hidden load:</strong> ${LOAD_LABELS[topLoad] || topLoad} — this is what's actually draining you</div>
+          </div>` : ''}
           ${topTrigger ? `<div class="reveal-stat">
             <div class="rs-icon">🔁</div>
-            <div class="rs-text"><strong>Most common trigger:</strong> ${triggerLabels[topTrigger] || topTrigger}</div>
+            <div class="rs-text"><strong>Most common trigger:</strong> ${TRIGGER_LABELS[topTrigger] || topTrigger}</div>
           </div>` : ''}
           <div style="margin-top:20px;padding:16px;background:rgba(255,255,255,0.5);border-radius:12px">
             <div style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--dusty-mauve);margin-bottom:8px;font-weight:500">One Relief Shift</div>
             <div style="font-size:13px;color:var(--text-mid);line-height:1.65;font-weight:300">${getReliefShift(topTime, topLoad)}</div>
           </div>
+          <div style="margin-top:14px;font-size:12px;color:var(--text-soft);text-align:center;font-weight:300">${total} total resets logged · starting cycle ${cycleNum + 1} now</div>
         </div>
       `;
     }
@@ -901,70 +1403,204 @@ Tone: like a wise, warm friend — not a therapist, not a life coach. Conversati
     updateWelcomePatternBar();
   }
 
+  function getTopKey(arr) {
+    if (!arr.length) return null;
+    const counts = {};
+    arr.forEach(k => { if (k) counts[k] = (counts[k] || 0) + 1; });
+    return Object.entries(counts).sort((a,b) => b[1]-a[1])[0]?.[0] || null;
+  }
+
   function getReliefShift(time, load) {
     const shifts = {
       'morning': {
-        'tracking': "Before tomorrow's morning rush, take 60 seconds the night before to write down the 3 things you absolutely need to remember. One list, off your brain.",
+        'tracking': "Before tomorrow's morning rush, take 60 seconds tonight to write down the 3 things you absolutely need to remember. One list, off your brain.",
         'anticipating': "Give yourself permission to not plan everything. Tomorrow morning, handle only what's in front of you — not what might happen at 3pm.",
-        'decision-fatigue': "Pick tomorrow's meals and your outfit tonight. Two fewer decisions before 9am changes everything.",
-        'coordination': "Designate one family logistics moment each evening (5 min max) so morning isn't when everyone figures things out.",
+        'decision-fatigue': "Pick tomorrow's meals and your outfit tonight. Two fewer decisions before 9am changes more than you'd expect.",
+        'coordination': "Designate one family logistics moment each evening — 5 minutes max — so morning isn't when everyone figures things out.",
         'emotional-labor': "Tomorrow morning, before anyone needs you — give yourself 5 minutes first. Even in the bathroom with the door locked."
       },
+      'afternoon': {
+        'tracking': "Afternoons are when the mental load peaks. Try a 2-minute 'brain dump' after lunch — everything you're holding, onto paper. Not organized. Just out.",
+        'decision-fatigue': "By afternoon your decision tank is usually low. Batch recurring afternoon decisions (snack, screen time, homework order) so they're not made from scratch daily.",
+        'coordination': "See if one afternoon coordination task can be simplified or handed off. Even partially.",
+        'emotional-labor': "You've been 'on' since morning. A 5-minute decompression between work and kids — even just sitting in your car — changes the whole afternoon.",
+        'anticipating': "Afternoons are when you're already anticipating the evening. Give yourself a transition ritual — even 2 minutes — between the day's phases."
+      },
       'evening': {
-        'tracking': "Write a 'brain dump' each evening — everything you're tracking onto paper or a note. It doesn't need to be organized. Just out of your head.",
-        'anticipating': "The evening shift is hard because you're anticipating tomorrow while recovering from today. Give yourself a 'close of day' ritual — even 2 minutes — to mentally close the file.",
-        'decision-fatigue': "By evening your decision-making tank is empty. Batch the recurring decisions (dinner rotation, bedtime order) so they're not made from scratch each day.",
-        'coordination': "See if one coordination task can be handed off — even partially. The school pickup, the activity reminder, the permission form follow-up.",
+        'tracking': "Write a 'brain dump' each evening — everything you're tracking onto paper or a note. Not organized. Just out of your head.",
+        'anticipating': "The evening shift is hard because you're anticipating tomorrow while recovering from today. A short 'close the file' ritual — even 2 minutes — helps your brain let go.",
+        'decision-fatigue': "By evening your decision-making tank is empty. Batch recurring decisions (dinner rotation, bedtime order) so they're not made from scratch each day.",
+        'coordination': "See if one evening coordination task can be handed off — even partially. The school pickup, the activity reminder, the permission form follow-up.",
         'emotional-labor': "You've been the anchor all day. Evenings, even briefly, you get to be a person not just a parent. Name one thing that's yours — not family-serving — and protect it."
+      },
+      'night': {
+        'tracking': "When you can't sleep because you're mentally tracking everything — keep a notepad by the bed. Write it down. Your brain will stop trying to remember it.",
+        'decision-fatigue': "Tomorrow, pre-decide the first three things you'll do after work. Decision fatigue at night is real. Remove it from tomorrow.",
+        'emotional-labor': "Night is when it all catches up with you. You gave all day. Even 10 minutes of something that belongs only to you before bed matters.",
+        'anticipating': "You can't solve tomorrow tonight. One thing you can do: write down one thing that's worrying you, then put it away. It'll be there tomorrow. You don't have to hold it overnight.",
+        'coordination': "Tomorrow, try handling one coordination task earlier in the day so it's not following you into the night."
       }
     };
-    const timeKey = ['morning','early morning'].includes(time) ? 'morning' : 'evening';
-    return shifts[timeKey]?.[load] || "Identify one recurring thing that drains you most at this time of day, and ask: can this be dropped, simplified, or shared? Even one shift creates breathing room.";
+    const timeKey = ['early morning','morning'].includes(time) ? 'morning'
+      : time === 'afternoon' ? 'afternoon'
+      : time === 'night' ? 'night'
+      : 'evening';
+    return shifts[timeKey]?.[load] || "Identify the one recurring thing that drains you most at this time of day and ask: can it be dropped, simplified, or shared? Even one small shift creates breathing room.";
   }
 
-  // ─── Welcome pattern bar ──────────────────────────────────────────────────────
+  // ─── Welcome pattern bar + recent log ────────────────────────────────────────
   function updateWelcomePatternBar() {
-    const count = state.entries.length;
-    if (count === 0) return;
+    const { total, completedCycles, positionInCycle } = getCycleInfo();
+    if (total === 0) return;
 
     const bar = document.getElementById('welcomePatternBar');
     bar.style.display = 'flex';
 
-    document.getElementById('welcomePatternText').textContent =
-      count >= 5 ? 'Pattern unlocked! See your insights.' : `${count} of 5 moments logged`;
+    const countInCycle = positionInCycle;
+    const justFinished = positionInCycle === 0 && total > 0;
+
+    document.getElementById('welcomePatternText').textContent = justFinished
+      ? `Cycle ${completedCycles} pattern unlocked ✦`
+      : `${countInCycle} of 5 this cycle`;
 
     const pips = document.getElementById('welcomePips');
     pips.innerHTML = Array(5).fill(0).map((_, i) =>
-      `<div class="pip ${i < count ? 'filled' : ''}"></div>`
+      `<div class="pip ${i < countInCycle ? 'filled' : ''}"></div>`
     ).join('');
 
-    // Show recent log
+    // Recent log — show last 3, with "View all" link if more exist
     const logSection = document.getElementById('welcomeLog');
-    if (state.entries.length > 0) {
+    if (total > 0) {
       const recent = [...state.entries].reverse().slice(0, 3);
-      const triggerLabels = {
-        'kids-not-listening': "Kids not listening",
-        'loud-chaos': "Loud & chaotic",
-        'carrying-alone': "Carrying too much",
-        'exhausted-touched-out': "Exhausted & touched out",
-        'snapped-and-ashamed': "Snapped & ashamed",
-        'other': "Something else"
-      };
+      const viewAll = total > 3
+        ? `<button class="log-view-all" onclick="showHistoryScreen()">View all ${total} resets →</button>`
+        : '';
       logSection.innerHTML = `<div class="log-title">Recent resets</div>` +
         recent.map(e => `
           <div class="log-entry">
             <span>💛</span>
-            <span>${triggerLabels[e.trigger] || e.trigger}</span>
+            <span>${TRIGGER_LABELS[e.trigger] || e.triggerCustomText || 'Something else'}</span>
             <span class="log-time">${e.date} · ${e.triggerTime}</span>
           </div>
-        `).join('');
+        `).join('') + viewAll;
     }
+  }
+
+  // ─── Full history screen ──────────────────────────────────────────────────────
+  function showHistoryScreen() {
+    const allEntries = [...state.entries].reverse();
+    const { total, completedCycles } = getCycleInfo();
+
+    // Group by cycle
+    const cycleGroups = [];
+    const reversed = [...state.entries]; // oldest first
+    for (let i = 0; i < reversed.length; i += 5) {
+      cycleGroups.push(reversed.slice(i, i + 5));
+    }
+
+    let html = `
+      <div class="card-eyebrow">Your Reset History</div>
+      <div class="card-heading">Every time you <em>showed up.</em></div>
+      <div class="card-subtext">${total} resets logged · ${completedCycles} pattern${completedCycles !== 1 ? 's' : ''} unlocked</div>
+    `;
+
+    // Show cycles in reverse (most recent first)
+    const cycleGroupsReversed = [...cycleGroups].reverse();
+    cycleGroupsReversed.forEach((group, reversedIdx) => {
+      const cycleNum = cycleGroups.length - reversedIdx;
+      const isCurrentCycle = reversedIdx === 0 && state.entries.length % 5 !== 0;
+      const label = isCurrentCycle ? `Cycle ${cycleNum} · in progress` : `Cycle ${cycleNum}`;
+
+      html += `<div style="margin-top:20px">
+        <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--dusty-mauve);font-weight:500;margin-bottom:8px">${label}</div>`;
+
+      [...group].reverse().forEach(e => {
+        html += `
+          <div class="history-entry" onclick="toggleHistoryDetail(this)">
+            <div class="history-entry-header">
+              <span class="history-dot">💛</span>
+              <span class="history-trigger">${TRIGGER_LABELS[e.trigger] || e.triggerCustomText || 'Something else'}</span>
+              <span class="history-meta">${e.date} · ${e.triggerTime}</span>
+            </div>
+            ${e.resetText ? `<div class="history-detail">${e.resetText.split(/\n\n+/).map(p => `<p>${p.trim()}</p>`).join('')}</div>` : ''}
+          </div>`;
+      });
+      html += `</div>`;
+    });
+
+    document.getElementById('historyCard').innerHTML = html;
+    goTo('screen-history');
+  }
+
+  function toggleHistoryDetail(el) {
+    const detail = el.querySelector('.history-detail');
+    if (!detail) return;
+    detail.classList.toggle('open');
+  }
+
+  // ─── MailerLite config ────────────────────────────────────────────────────────
+  const ML_API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI0IiwianRpIjoiNTJlYjM3NGQ0Yjk0NTI1MjAwOWEyODBmZjM2Y2RjOWEyZDkyMjI4ZGZiNzMwYzY5NGUwODk2Y2Y2NTNiZjE0YjBkOGIzOGFiN2UxNWNkMzAiLCJpYXQiOjE3NzQ1Njg4NzQuNDU4ODQ1LCJuYmYiOjE3NzQ1Njg4NzQuNDU4ODQ4LCJleHAiOjQ5MzAyNDI0NzQuNDU0NDUyLCJzdWIiOiIyNzUwNiIsInNjb3BlcyI6W119.Agt-E9YN3ya7S1AiZcGQpU80nLfNvFRxeBowiA9lQPG3kHYkfDHbi8mZ7ms_vR5DzuXdfMVilKh2lnZ1SgFfMR7XhzRl9u_VoLKJZs5FxezjpAga6Trerq6ud4HNVwr3HZbDMOH4x8SXjtrJWN8QhGENzRHLpsVJj-NJxNTJjwHrewwduW3rgjUZzdtvh6JQoo0Y4WbwFtH21oRB48LOKzwBuEVGlpxnP_jCM-TU9KacDnFeGtfpl3yZ3Uuxqfws8gQdH9DcFgBSqd3DMQWiQGodCNRKuVUlINhAI92oIvA7SmoUabDMsGib-jJJ9Zor3IjSkiKe0Lrv4rALahKyAApsM91gnQbXB_Jc5xJDY8K60Bi6Xi-OJRFllIBSXAGN5tHgBBZSLxjizhyzPbvACACP96Ql5nSUVZqwYT0F-4adF_uF_zJvnGJy-ODBVoDHPHib3p2Ys2B6oeFrJiF2JAePZjt6Hs9Okf1jeir3v7t_GZtRyYeg4vHPXlVXtv3uh2LZq2QDmqI17TVAX0t_Gu34t3MQWk2t_v2kieS1gird68nNFWpYta63rfukyJNBTz1yRasT6imVlw0AkFv-mD9C47_0Dc17UIZMkYWiGH0vwlMsH9a_y5KJ-vVdfrHXkj_AfMzVrhCFur3KYRo0mcDIOOtK84KXWzkzKyFVjJk';
+  const ML_GROUP_ID = '173046043426948337';
+  const GATE_KEY = 'resetRoom_gated_v1';
+
+  async function submitGate() {
+    const name = document.getElementById('gateName').value.trim();
+    const email = document.getElementById('gateEmail').value.trim();
+    const errEl = document.getElementById('gateError');
+    const btn = document.getElementById('gateBtn');
+
+    errEl.style.display = 'none';
+
+    if (!name) { errEl.textContent = 'What should I call you?'; errEl.style.display = 'block'; return; }
+    if (!email || !email.includes('@')) { errEl.textContent = 'A valid email is needed to save your results.'; errEl.style.display = 'block'; return; }
+
+    btn.textContent = 'Just a sec...';
+    btn.disabled = true;
+
+    try {
+      await fetch('https://connect.mailerlite.com/api/subscribers', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${ML_API_KEY}`
+        },
+        body: JSON.stringify({
+          email,
+          fields: { name },
+          groups: [ML_GROUP_ID]
+        })
+      });
+    } catch(e) {
+      // Fail silently — let them in regardless, don't block on API errors
+    }
+
+    // Save locally so they don't see the gate again on return visits
+    try { localStorage.setItem(GATE_KEY, JSON.stringify({ name, email, ts: Date.now() })); } catch(e) {}
+    state.userName = name;
+    state.userEmail = email;
+
+    goTo('screen-welcome');
   }
 
   // ─── Init ─────────────────────────────────────────────────────────────────────
   loadEntries();
-  updateWelcomePatternBar();
-  updateProgress('screen-welcome');
+
+  // Check if already gated
+  try {
+    const gated = JSON.parse(localStorage.getItem(GATE_KEY));
+    if (gated && gated.email) {
+      state.userName = gated.name;
+      state.userEmail = gated.email;
+      goTo('screen-welcome');
+      updateWelcomePatternBar();
+      updateProgress('screen-welcome');
+    } else {
+      updateProgress('screen-gate');
+    }
+  } catch(e) {
+    updateProgress('screen-gate');
+  }
 </script>
 </body>
 </html>
