@@ -424,15 +424,15 @@
   <div class="screen active" id="screen-gate">
     <div class="card">
       <div class="card-eyebrow">Free tool for working moms</div>
-      <div class="card-heading">Before we start — <em>who are you?</em></div>
-      <div class="card-subtext">Enter your name and email and I'll send you your reset results so you never lose them. No spam, ever. Unsubscribe any time.</div>
+      <div class="card-heading">For the moments <em>you feel off.</em></div>
+      <div class="card-subtext">You love your kids and want the best for them, but sometimes the weight of everything takes over and you find yourself snapping.<br><br>Use this reset anytime you want to get back to center and show up in the way your kids deserve.</div>
       <div style="display:flex;flex-direction:column;gap:12px;margin-top:4px">
-        <input type="text" id="gateName" placeholder="First name" style="width:100%;padding:14px 16px;border:1.5px solid rgba(0,0,0,0.1);border-radius:12px;font-size:14px;font-family:inherit;background:rgba(255,255,255,0.7);color:var(--text-dark);outline:none;box-sizing:border-box"/>
+        <input type="text" id="gateName" placeholder="First name (or nickname)" style="width:100%;padding:14px 16px;border:1.5px solid rgba(0,0,0,0.1);border-radius:12px;font-size:14px;font-family:inherit;background:rgba(255,255,255,0.7);color:var(--text-dark);outline:none;box-sizing:border-box"/>
         <input type="email" id="gateEmail" placeholder="Email address" style="width:100%;padding:14px 16px;border:1.5px solid rgba(0,0,0,0.1);border-radius:12px;font-size:14px;font-family:inherit;background:rgba(255,255,255,0.7);color:var(--text-dark);outline:none;box-sizing:border-box"/>
       </div>
       <div id="gateError" style="display:none;font-size:12px;color:#c0392b;margin-top:6px;font-weight:300"></div>
-      <button class="btn-primary" id="gateBtn" onclick="submitGate()" style="margin-top:20px">Take me in ✦</button>
-      <div style="font-size:11px;color:var(--text-soft);text-align:center;margin-top:12px;font-weight:300;line-height:1.6">By entering your email you're joining Darz's free list.<br>Unsubscribe any time.</div>
+      <button class="btn-primary" id="gateBtn" onclick="submitGate()" style="margin-top:20px">Let's reset ✦</button>
+      <div style="font-size:11px;color:var(--text-soft);text-align:center;margin-top:12px;font-weight:300;line-height:1.6">Yes, this puts you on the email list with other moms who relate. It's real-life helpful stuff.</div>
     </div>
   </div>
 
@@ -446,6 +446,7 @@
       </div>
       <div class="card-subtext">This is your space to reset and add to your tank — in the moment, or whenever you need it. Takes 1–4 minutes. Works any time.</div>
       <button class="btn-primary" onclick="goTo('screen-bandwidth')">I need a reset ✦</button>
+      <div style="font-size:12px;color:var(--text-soft);text-align:center;margin-top:14px;font-weight:300;line-height:1.6">Bookmark this page for the next time you need a little boost.</div>
     </div>
     <div class="pattern-bar" id="welcomePatternBar" style="display:none">
       <div class="pattern-icon">✦</div>
@@ -507,6 +508,10 @@
         <button class="choice-btn" onclick="selectTrigger(this, 'snapped-and-ashamed', 'morning')">
           <span class="choice-icon">💔</span>
           <div><div class="choice-label">I snapped and feel awful about it</div><div class="choice-desc">Shame spiral starting</div></div>
+        </button>
+        <button class="choice-btn" onclick="selectTrigger(this, 'frozen-lazy', 'afternoon')">
+          <span class="choice-icon">🛋️</span>
+          <div><div class="choice-label">I feel so lazy I can't do anything</div><div class="choice-desc">Stuck, unmotivated, can't get started</div></div>
         </button>
         <button class="choice-btn" id="otherTriggerBtn" onclick="toggleOtherTrigger(this)">
           <span class="choice-icon">✏️</span>
@@ -1002,6 +1007,12 @@
         "The fact that you feel bad about it? That's actually proof that you care deeply. People who don't care don't spiral like this. You snapped because you're human and you were maxed out. That's the whole story.",
         "That moment already happened and you can't undo it. What you can do is not make it mean more than it does. One hard moment in one hard day is not your whole story as a mom."
       ],
+      'frozen-lazy': [
+        "That feeling of knowing there are things to do and being completely unable to start any of them — that's not laziness. That's what happens when your brain is overloaded and your body has just hit the floor.",
+        "You're not lazy. You're frozen. There's a real difference. Lazy is not caring. Frozen is caring too much with too little left in the tank to actually move.",
+        "I'm super curious — have you eaten today? Slept? Had five minutes without someone needing something? Because what looks like laziness from the outside is usually just a body that's been running on empty for too long.",
+        "The fact that you're beating yourself up for not doing anything is actually proof you're not lazy. Lazy people don't feel guilty. You're just stuck. And stuck is fixable."
+      ],
       'other': [
         "Whatever just happened — it makes total sense that you're struggling with it. You don't have to have a 'good enough' reason to need a reset. Feeling this way is enough.",
         "You came here instead of just pushing through. That alone tells me something — you know you needed a pause. That's not weakness. That's actually really smart.",
@@ -1155,6 +1166,10 @@
         "Tomorrow, pay attention to when your tank starts going low — not when it hits empty. That's your signal. You don't have to fix it, just notice it. Noticing is the first step.",
         "One thing for tomorrow: if you feel yourself getting close to the edge, that's your cue to do one tiny regulating thing before the moment breaks. A breath, a walk to another room, anything. Interrupt before the red."
       ],
+      'frozen-lazy': [
+        "Tomorrow, when you feel the freeze coming — don't ask yourself what you should do. Just get up and move to a different room. Motion before decision. Every time.",
+        "Try pre-deciding one tiny thing to do the moment you feel stuck — just one. Wash one dish. Put one thing away. The goal isn't the task, it's breaking the freeze."
+      ],
       'other': [
         "Tomorrow, batch one thing that's been eating at your brain. Admin stuff, errands, appointments — pick a day and a time and just decide that's when it happens. Then forget about it until then.",
         "Pre-decide one thing tonight so tomorrow you have one fewer choice to make. It sounds small but decision fatigue is real, and every decision you don't have to make is energy back in the tank.",
@@ -1208,7 +1223,8 @@
       'loud-chaos': "everything feeling loud, chaotic, overwhelming",
       'carrying-alone': "carrying the invisible load completely alone",
       'exhausted-touched-out': "exhausted and touched out with nothing left",
-      'snapped-and-ashamed': "snapped at the kids and now feeling shame"
+      'snapped-and-ashamed': "snapped at the kids and now feeling shame",
+      'frozen-lazy': "she feels frozen, unmotivated, like she can't do anything"
     }[trigger] || (state.triggerCustomText || "something hard she described herself");
 
     const loadLabel = {
@@ -1322,6 +1338,7 @@ Under 180 words total. Sound like Darz, not a life coach.`;
     'carrying-alone': "Carrying too much alone",
     'exhausted-touched-out': "Exhausted & touched out",
     'snapped-and-ashamed': "Snapped & ashamed",
+    'frozen-lazy': "Felt frozen & unmotivated",
     'other': "Something else"
   };
   const LOAD_LABELS = {
@@ -1552,7 +1569,7 @@ Under 180 words total. Sound like Darz, not a life coach.`;
     errEl.style.display = 'none';
 
     if (!name) { errEl.textContent = 'What should I call you?'; errEl.style.display = 'block'; return; }
-    if (!email || !email.includes('@')) { errEl.textContent = 'A valid email is needed to save your results.'; errEl.style.display = 'block'; return; }
+    if (!email || !email.includes('@')) { errEl.textContent = 'A valid email is needed to access this tool.'; errEl.style.display = 'block'; return; }
 
     btn.textContent = 'Just a sec...';
     btn.disabled = true;
