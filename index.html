@@ -1584,21 +1584,13 @@ Under 180 words total. Sound like Darz, not a life coach.`;
     btn.disabled = true;
 
     try {
-      await fetch('https://connect.mailerlite.com/api/subscribers', {
+      await fetch('/.netlify/functions/subscribe', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${ML_API_KEY}`
-        },
-        body: JSON.stringify({
-          email,
-          fields: { name },
-          groups: [ML_GROUP_ID]
-        })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, name })
       });
     } catch(e) {
-      // Fail silently — let them in regardless, don't block on API errors
+      // Fail silently — let them in regardless
     }
 
     // Save locally so they don't see the gate again on return visits
